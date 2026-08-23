@@ -74,16 +74,15 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const body = readBody(req);
-  const sessionId = String(body.session_id || url.searchParams.get("session_id") || "");
-  if (sessionId && live) {
-    const { ok, data } = await stripeGet(secret, "/checkout/sessions/" + encodeURIComponent(sessionId) + "?expand[]=subscription");
-    if (!ok || !sessionPaid(data)) {
-      json(res, 402, { error: "not_paid" });
-      return;
-    }
+  // POST /api/pdf is now gated when live=true
+  // Use /api/preview for unpaid preview or /api/generate for paid generation
+  if (live) {
+    json(res, 402, { error: "payment_required", message: "Use /api/preview for unpaid preview or /api/generate with a paid session" });
+    return;
   }
 
+  // When live=false, allow POST for QA/testing
+  const body = readBody(req);
   const form = parseForm(body);
   const pdf = buildPdf(form);
   const name = filenameFor(form);

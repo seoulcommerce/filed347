@@ -69,7 +69,8 @@
       btn.onclick = async () => {
         btn.disabled = true;
         try {
-          const pr = await fetch("/api/pdf", {
+          const endpoint = body.session_id ? "/api/generate" : "/api/preview";
+          const pr = await fetch(endpoint, {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify(body)

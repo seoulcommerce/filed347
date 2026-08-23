@@ -245,6 +245,7 @@
             go.disabled = false;
             return;
           }
+          try { sessionStorage.setItem("filed347", JSON.stringify(body)); } catch (_) {}
           const r = await fetch("/api/checkout", {
             method: "POST",
             headers: { "content-type": "application/json" },
@@ -255,12 +256,12 @@
           location.href = d.url;
           return;
         }
-        const r = await fetch("/api/pdf", {
+        const r = await fetch("/api/preview", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(body)
         });
-        if (!r.ok) throw new Error("pdf_failed");
+        if (!r.ok) throw new Error("preview_failed");
         const id = r.headers.get("x-filed347-id") || r.headers.get("x-form-id");
         if (id) {
           location.href = "/thanks?id=" + encodeURIComponent(id);
@@ -269,11 +270,11 @@
         const blob = await r.blob();
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "filed347-wh347.pdf";
+        a.download = "filed347-preview.pdf";
         a.click();
       } catch (_) {
         err.hidden = false;
-        err.textContent = stripeLive ? "Could not start Checkout. No charge was made." : "Could not generate the WH-347.";
+        err.textContent = stripeLive ? "Could not start Checkout. No charge was made." : "Could not generate the preview.";
       }
       go.disabled = false;
     });
