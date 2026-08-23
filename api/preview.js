@@ -59,4 +59,3 @@ module.exports = async function handler(req, res) {
   const result = await store.put(form, pdf, name);
   sendPdf(res, pdf, name, result.persisted ? result.id : null);
 };
-};
