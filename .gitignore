@@ -2,3 +2,7 @@
 .env.local
 node_modules
 test-wh347.pdf
+test-gusto-wh347.pdf
+test-qbo-adp-wh347.pdf
+test-*-wh347*.png
+.vercel

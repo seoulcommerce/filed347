@@ -1,0 +1,5 @@
+Employee last name,Employee first name,Regular hours,Overtime hours,Gross earnings,Federal income tax,Social Security tax,Employee deductions,Net pay,Job title,Employee ID
+SAMPLE,Gusto One,40,0,800.00,80.00,49.60,10.00,660.40,SAMPLE Laborer,0001
+SAMPLE,Gusto Two,32,8,1100.00,110.00,68.20,0.00,921.80,SAMPLE Operator,0002
+SAMPLE,Gusto Three,36,0,540.00,54.00,33.48,0.00,452.52,SAMPLE Apprentice,0003
+SAMPLE,Gusto Four,40,2,1204.00,120.00,74.65,15.00,994.35,SAMPLE Carpenter,0004

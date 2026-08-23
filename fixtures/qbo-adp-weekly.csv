@@ -1,0 +1,5 @@
+Full Name,Regular Pay Hours,Overtime Hours,Regular Rate,Overtime Rate,Gross Pay,Federal Income Tax,Social Security,Medicare,Other Deductions,Net Pay,Job Title,Tax ID
+SAMPLE Qbo One,40,0,20.00,30.00,800.00,80.00,49.60,11.60,0.00,658.80,SAMPLE Laborer,0001
+SAMPLE Qbo Two,32,8,25.00,37.50,1100.00,110.00,68.20,15.95,0.00,905.85,SAMPLE Operator,0002
+SAMPLE Qbo Three,36,0,15.00,22.50,540.00,54.00,33.48,7.83,0.00,444.69,SAMPLE Apprentice,0003
+SAMPLE Qbo Four,24,0,25.00,37.50,600.00,60.00,37.20,8.70,10.00,484.10,SAMPLE Operator,0004
