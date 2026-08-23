@@ -140,17 +140,17 @@ async function get(id) {
   if (!blob) return null;
   
   try {
-    const metaBlob = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
-    if (!metaBlob) return null;
+    const metaResult = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
+    if (!metaResult || metaResult.statusCode !== 200) return null;
     
-    const metaText = await metaBlob.text();
+    const metaText = await metaResult.text();
     const j = JSON.parse(metaText);
     if (expired(j)) return null;
     
-    const pdfBlob = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
-    if (!pdfBlob) return null;
+    const pdfResult = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
+    if (!pdfResult || pdfResult.statusCode !== 200) return null;
     
-    const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
+    const pdfBuffer = Buffer.from(await pdfResult.arrayBuffer());
     rec = Object.assign({}, j, { pdf: pdfBuffer });
     mem.set(key, rec);
     return rec;
@@ -168,25 +168,22 @@ async function checkPreviewLimit(identifier) {
   }
   
   const blob = await getBlobClient();
-  if (!blob) return null;
+  if (!blob) return false;
   
   try {
-    const metaResult = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
-    if (!metaResult || metaResult.statusCode !== 200) return null;
-    
-    const metaText = await metaResult.text();
-    const j = JSON.parse(metaText);
-    if (expired(j)) return null;
-    
-    const pdfResult = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
-    if (!pdfResult || pdfResult.statusCode !== 200) return null;
-    
-    const pdfBuffer = Buffer.from(await pdfResult.arrayBuffer());
-    rec = Object.assign({}, j, { pdf: pdfBuffer });
-    mem.set(key, rec);
-    return rec;
+    const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
+    const limitResult = await blob.get(`filed347/preview-limit/${hash}.json`, { access: 'private' });
+    if (limitResult && limitResult.statusCode === 200) {
+      const limitText = await limitResult.text();
+      const data = JSON.parse(limitText);
+      if (data.used && (Date.now() - data.used) < TTL_MS) {
+        mem.set(key, data.used);
+        return true;
+      }
+    }
+    return false;
   } catch (_) {
-    return null;
+    return false;
   }
 }
 
@@ -208,3 +205,4 @@ async function recordPreview(identifier) {
 }
 
 module.exports = { put, get, del, sweep, TTL_MS, DIR, checkPreviewLimit, recordPreview };
+// Ensure fresh build with BLOB_STORE_ID env
