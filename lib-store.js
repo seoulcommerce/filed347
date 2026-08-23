@@ -10,9 +10,14 @@ let blobClient = null;
 
 async function getBlobClient() {
   if (blobClient) return blobClient;
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  
+  const hasOidc = process.env.BLOB_STORE_ID && process.env.VERCEL_OIDC_TOKEN;
+  const hasToken = process.env.BLOB_READ_WRITE_TOKEN;
+  
+  if (!hasOidc && !hasToken) {
     return null;
   }
+  
   try {
     const { put, get, del, list } = require("@vercel/blob");
     blobClient = { put, get, del, list };
@@ -94,14 +99,12 @@ async function put(a, b, c) {
   try {
     await blob.put(`filed347/pdf/${id}.pdf`, pdf, {
       access: "private",
-      addRandomSuffix: false,
-      cacheControlMaxAge: TTL_MS / 1000
+      addRandomSuffix: false
     });
     
     await blob.put(`filed347/meta/${id}.json`, JSON.stringify(rec), {
       access: "private",
-      addRandomSuffix: false,
-      cacheControlMaxAge: TTL_MS / 1000
+      addRandomSuffix: false
     });
     
     sweep();
@@ -139,16 +142,17 @@ async function get(id) {
   if (!blob) return null;
   
   try {
-    const metaResp = await fetch(`https://blob.vercel-storage.com/filed347/meta/${key}.json`);
-    if (!metaResp.ok) return null;
+    const metaBlob = await blob.get(`filed347/meta/${key}.json`);
+    if (!metaBlob) return null;
     
-    const j = await metaResp.json();
+    const metaText = await metaBlob.text();
+    const j = JSON.parse(metaText);
     if (expired(j)) return null;
     
-    const pdfResp = await fetch(`https://blob.vercel-storage.com/filed347/pdf/${key}.pdf`);
-    if (!pdfResp.ok) return null;
+    const pdfBlob = await blob.get(`filed347/pdf/${key}.pdf`);
+    if (!pdfBlob) return null;
     
-    const pdfBuffer = Buffer.from(await pdfResp.arrayBuffer());
+    const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
     rec = Object.assign({}, j, { pdf: pdfBuffer });
     mem.set(key, rec);
     return rec;
@@ -170,10 +174,14 @@ async function checkPreviewLimit(identifier) {
   
   try {
     const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
-    const resp = await fetch(`https://blob.vercel-storage.com/filed347/preview-limit/${hash}.json`);
-    if (resp.ok) {
-      mem.set(key, Date.now());
-      return true;
+    const limitBlob = await blob.get(`filed347/preview-limit/${hash}.json`);
+    if (limitBlob) {
+      const limitText = await limitBlob.text();
+      const data = JSON.parse(limitText);
+      if (data.used && (Date.now() - data.used) < TTL_MS) {
+        mem.set(key, data.used);
+        return true;
+      }
     }
     return false;
   } catch (_) {
@@ -193,8 +201,7 @@ async function recordPreview(identifier) {
     const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
     await blob.put(`filed347/preview-limit/${hash}.json`, JSON.stringify({ used: now }), {
       access: "private",
-      addRandomSuffix: false,
-      cacheControlMaxAge: TTL_MS / 1000
+      addRandomSuffix: false
     });
   } catch (_) {}
 }
