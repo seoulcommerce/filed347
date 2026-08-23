@@ -168,22 +168,25 @@ async function checkPreviewLimit(identifier) {
   }
   
   const blob = await getBlobClient();
-  if (!blob) return false;
+  if (!blob) return null;
   
   try {
-    const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
-    const limitBlob = await blob.get(`filed347/preview-limit/${hash}.json`, { access: 'private' });
-    if (limitBlob) {
-      const limitText = await limitBlob.text();
-      const data = JSON.parse(limitText);
-      if (data.used && (Date.now() - data.used) < TTL_MS) {
-        mem.set(key, data.used);
-        return true;
-      }
-    }
-    return false;
+    const metaResult = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
+    if (!metaResult || metaResult.statusCode !== 200) return null;
+    
+    const metaText = await metaResult.text();
+    const j = JSON.parse(metaText);
+    if (expired(j)) return null;
+    
+    const pdfResult = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
+    if (!pdfResult || pdfResult.statusCode !== 200) return null;
+    
+    const pdfBuffer = Buffer.from(await pdfResult.arrayBuffer());
+    rec = Object.assign({}, j, { pdf: pdfBuffer });
+    mem.set(key, rec);
+    return rec;
   } catch (_) {
-    return false;
+    return null;
   }
 }
 
