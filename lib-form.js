@@ -327,6 +327,8 @@ function parseForm(body) {
     officialPhone: ascii(b.officialPhone || b.official_phone).slice(0, 40),
     officialEmail: clean(b.officialEmail || b.official_email, 200),
     remarks: ascii(b.remarks).slice(0, 400),
+    role: String(b.role || "").toLowerCase() === "prime" ? "prime" : "subcontractor",
+    finalPayroll: !!(b.finalPayroll || b.final_payroll),
     csv: String(b.csv == null ? "" : b.csv),
     workers: parseWorkers(b.csv)
   };
