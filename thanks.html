@@ -20,62 +20,92 @@
   <div class="wrap">
     <p><strong>Filed347</strong></p>
     <h1>Thanks.</h1>
-    <p id="msg">Checking the subscription…</p>
+    <p id="msg">Looking up the WH-347…</p>
     <p id="dl"></p>
     <p class="not">Review the WH-347 and Statement of Compliance. Mark the boxes that apply. Sign it. We do not say you are compliant.</p>
     <p><a href="/">Back</a></p>
   </div>
   <script>
-    const sessionId = new URLSearchParams(location.search).get("session_id") || "";
+    const params = new URLSearchParams(location.search);
+    const downloadId = params.get("id") || "";
+    const sessionId = params.get("session_id") || "";
     const msg = document.getElementById("msg");
     const dl = document.getElementById("dl");
-    (async () => {
-      if (!sessionId) {
-        msg.className = "err";
-        msg.textContent = "No payment session. If you paid, email stevie@seoulwebdesign.com.";
-        return;
-      }
-      try {
-        const r = await fetch("/api/confirm?session_id=" + encodeURIComponent(sessionId));
-        const data = await r.json();
-        if (data && data.paid) {
-          msg.className = "ok";
-          msg.textContent = "Subscription received. Download the WH-347 built from the CSV you uploaded.";
-          const btn = document.createElement("button");
-          btn.className = "btn";
-          btn.textContent = "Download WH-347 PDF";
-          btn.onclick = async () => {
-            btn.disabled = true;
-            let body = { session_id: sessionId };
-            try {
-              const saved = sessionStorage.getItem("filed347");
-              if (saved) Object.assign(body, JSON.parse(saved));
-            } catch (_) {}
-            body.session_id = sessionId;
-            const pr = await fetch("/api/pdf", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify(body)
-            });
-            if (!pr.ok) {
-              msg.className = "err";
-              msg.textContent = "Could not build the PDF. Email stevie@seoulwebdesign.com if you were charged.";
-              btn.disabled = false;
-              return;
-            }
-            const blob = await pr.blob();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "filed347-wh347.pdf";
-            a.click();
-            btn.disabled = false;
-          };
-          dl.appendChild(btn);
+
+    function addDownload(href) {
+      const a = document.createElement("a");
+      a.className = "btn";
+      a.href = href;
+      a.textContent = "Download WH-347 PDF";
+      dl.appendChild(a);
+    }
+
+    function addBlobButton(body) {
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.textContent = "Download WH-347 PDF";
+      btn.onclick = async () => {
+        btn.disabled = true;
+        const pr = await fetch("/api/pdf", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        if (!pr.ok) {
+          msg.className = "err";
+          msg.textContent = "Could not build the PDF.";
+          btn.disabled = false;
           return;
         }
+        const blob = await pr.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "filed347-wh347.pdf";
+        a.click();
+        btn.disabled = false;
+      };
+      dl.appendChild(btn);
+    }
+
+    (async () => {
+      if (downloadId) {
+        msg.className = "ok";
+        msg.textContent = "Your WH-347 is ready. Review it, mark the boxes, sign it, and file it.";
+        addDownload("/api/pdf?id=" + encodeURIComponent(downloadId));
+        return;
+      }
+      let saved = null;
+      try {
+        const raw = sessionStorage.getItem("filed347");
+        if (raw) saved = JSON.parse(raw);
       } catch (_) {}
+      if (sessionId) {
+        try {
+          const r = await fetch("/api/confirm?session_id=" + encodeURIComponent(sessionId));
+          const data = await r.json();
+          if (data && data.paid) {
+            msg.className = "ok";
+            msg.textContent = "Subscription received. Download the WH-347 built from the CSV you uploaded.";
+            if (saved) addBlobButton(Object.assign({}, saved, { session_id: sessionId }));
+            else {
+              msg.className = "err";
+              msg.textContent = "Payment is confirmed, but this browser no longer has the CSV. Generate the WH-347 again from the form.";
+            }
+            return;
+          }
+        } catch (_) {}
+        msg.className = "err";
+        msg.textContent = "We could not confirm that payment.";
+        return;
+      }
+      if (saved && saved.csv) {
+        msg.className = "ok";
+        msg.textContent = "Download the WH-347 built from the CSV in this browser session.";
+        addBlobButton(saved);
+        return;
+      }
       msg.className = "err";
-      msg.textContent = "We could not confirm that payment. Email stevie@seoulwebdesign.com if you were charged.";
+      msg.textContent = "No PDF to download. Generate a WH-347 from the form.";
     })();
   </script>
 </body>
