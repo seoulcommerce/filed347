@@ -1,3 +1,9 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/sample-wh347.pdf",
+      "destination": "/api/pdf?sample=1"
+    }
+  ]
 }
