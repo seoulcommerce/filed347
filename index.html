@@ -78,6 +78,9 @@
     <h2>What you still do</h2>
     <p>Review the PDF. Mark the boxes that apply (prime / sub / final payroll if they are on the form). Sign it. File it with the GC. We do not file it. We do not say you are compliant.</p>
 
+    <h2>CSV format</h2>
+    <p>Gusto and QBO weekly exports work. If your payroll system does not export Mon–Sun day columns, those cells stay blank on the WH-347. See the <a href="/COLUMN-MAPPING.md">column mapping guide</a> for header names we recognize.</p>
+
     <form class="card" id="f">
       <h2 style="margin-top:0">Generate your WH-347</h2>
       
@@ -144,8 +147,10 @@
         </div>
       </div>
 
-      <label for="email">Email for Stripe</label>
-      <input id="email" type="email" autocomplete="email">
+      <div id="email-field" style="display:none;">
+        <label for="email">Email for Stripe</label>
+        <input id="email" type="email" autocomplete="email">
+      </div>
 
       <label for="csvfile">Payroll CSV</label>
       <input id="csvfile" type="file" accept=".csv,text/csv,text/plain">
@@ -159,18 +164,12 @@
     </form>
 
     <h2>Privacy</h2>
-    <p><strong>Who this is for.</strong> Public-works subcontractors filing a WH-347. Not the public. Not employees.</p>
-    <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, email. A billing email for Stripe when checkout is live.</p>
-    <p><strong>SSN.</strong> Last four only. Do not upload a full Social Security number. If a cell looks longer than four digits, we keep the last four.</p>
-    <p><strong>How long the CSV lives.</strong></p>
-    <ul>
-      <li>The CSV is read in your browser.</li>
-      <li>It sits in your browser session until you download the PDF or close the tab.</li>
-      <li>The server sees the CSV only in the request that builds the PDF. That request is not written to a payroll database or a disk folder in this product.</li>
-      <li>After that request ends, we do not keep the CSV.</li>
-      <li>If you close the tab before download, the copy in your browser is gone. We cannot rebuild it from email.</li>
-    </ul>
-    <p><strong>Not a law firm.</strong> This is software that fills a form from your file.</p>
+    <p><strong>Who this is for.</strong> Public-works subcontractors generating a WH-347. Not the public. Not employees.</p>
+    <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, and email. Prime or subcontractor, and whether this is the final payroll.</p>
+    <p><strong>No full SSN.</strong> Last 4 only. We drop anything that looks like a 9-digit SSN. Do not upload a full Social Security number. Identifying numbers on the PDF are last four characters only.</p>
+    <p><strong>How long data lives.</strong> The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record. The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory for 24 hours, then gone. After 24 hours the id no longer downloads. sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
+    <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s by email. There is no payroll inbox.</p>
+    <p><strong>Not a law firm.</strong> This is software that fills a form from your file. Not a legal opinion. We do not file for you. We do not say you are compliant.</p>
 
     <h2>Short terms</h2>
     <ol>
@@ -179,7 +178,7 @@
       <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC's process.</li>
       <li>We do not invent wage determinations. You paste the WD from the contract. Sample files use SAMPLE workers and a SAMPLE job.</li>
       <li>Do not upload a full SSN. Last-4 only.</li>
-      <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused. No refund language until Stripe is live and CoS writes it.</li>
+      <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused.</li>
       <li>$69/mo applies only when Stripe checkout is live. It is not live now. No charge can be made.</li>
       <li>We can refuse a file that includes a full SSN or that we cannot parse.</li>
       <li>These terms are the whole deal until a later dated rewrite.</li>
@@ -188,6 +187,7 @@
     <footer>
       <p>Filed347. Software. Not a legal opinion. You review, mark boxes, sign, and file.</p>
       <p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+      <p><strong>Contact:</strong> Questions about Filed347? Use this short form: <a href="https://forms.gle/placeholder" target="_blank" rel="noopener">Contact Form</a> (Do not email payroll files.)</p>
     </footer>
   </div>
   
@@ -207,6 +207,7 @@
       if (stripeLive) {
         subscribe.disabled = false;
         subscribe.textContent = "Subscribe ($69/mo)";
+        document.getElementById("email-field").style.display = "block";
       }
     }).catch(() => { note.textContent = CAPTION_OFF; });
     

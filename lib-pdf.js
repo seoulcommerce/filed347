@@ -109,11 +109,14 @@ function buildPayrollPage(form, workers, startIndex, pageNo, pageCount) {
 
   const boxH = 54;
   R(ops, left, y - boxH, 760, boxH, 0.7);
-  T(ops, "Prime contractor / Subcontractor:  [  ] Prime    [  ] Subcontractor   (mark the one that applies)", 7, left + 4, y - 11, false);
-  checkbox(ops, left + 186, y - 18, form.role === "prime");
-  checkbox(ops, left + 256, y - 18, form.role === "subcontractor");
-  T(ops, "Final payroll this project?  [  ] Yes   (do not mark unless this is the last week)", 7, 430, y - 11, false);
-  checkbox(ops, 600, y - 18, form.finalPayroll);
+  T(ops, "Prime contractor / Subcontractor:", 7, left + 4, y - 11, false);
+  checkbox(ops, left + 140, y - 18, form.role === "prime");
+  T(ops, "Prime", 7, left + 152, y - 11, false);
+  checkbox(ops, left + 210, y - 18, form.role === "subcontractor");
+  T(ops, "Subcontractor", 7, left + 222, y - 11, false);
+  T(ops, "Final payroll this project?", 7, 430, y - 11, false);
+  checkbox(ops, 580, y - 18, form.finalPayroll);
+  T(ops, "Yes", 7, 592, y - 11, false);
   T(ops, "Name: " + clip(form.contractor || "", 8, 240), 8, left + 4, y - 24, false);
   T(ops, "Address: " + clip(form.address || "", 8, 300), 8, 300, y - 24, false);
   T(ops, "Project: " + clip(form.project || "", 8, 250), 8, left + 4, y - 36, false);
