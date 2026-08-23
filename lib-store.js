@@ -11,11 +11,6 @@ let blobClient = null;
 async function getBlobClient() {
   if (blobClient) return blobClient;
   
-  const hasBlob = process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN;
-  if (!hasBlob) {
-    return null;
-  }
-  
   try {
     const { put, get, del, list } = require("@vercel/blob");
     blobClient = { put, get, del, list };
