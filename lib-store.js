@@ -138,14 +138,23 @@ async function get(id) {
     const metaResult = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
     if (!metaResult) return null;
     
-    const metaText = await metaResult.text();
+    const metaChunks = [];
+    for await (const chunk of metaResult.stream) {
+      metaChunks.push(chunk);
+    }
+    const metaText = Buffer.concat(metaChunks).toString();
     const j = JSON.parse(metaText);
     if (expired(j)) return null;
     
     const pdfResult = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
     if (!pdfResult) return null;
     
-    const pdfBuffer = Buffer.from(await pdfResult.arrayBuffer());
+    const pdfChunks = [];
+    for await (const chunk of pdfResult.stream) {
+      pdfChunks.push(chunk);
+    }
+    const pdfBuffer = Buffer.concat(pdfChunks);
+    
     rec = Object.assign({}, j, { pdf: pdfBuffer });
     mem.set(key, rec);
     return rec;
@@ -169,7 +178,11 @@ async function checkPreviewLimit(identifier) {
     const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
     const limitResult = await blob.get(`filed347/preview-limit/${hash}.json`, { access: 'private' });
     if (limitResult) {
-      const limitText = await limitResult.text();
+      const chunks = [];
+      for await (const chunk of limitResult.stream) {
+        chunks.push(chunk);
+      }
+      const limitText = Buffer.concat(chunks).toString();
       const data = JSON.parse(limitText);
       if (data.used && (Date.now() - data.used) < TTL_MS) {
         mem.set(key, data.used);
