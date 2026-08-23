@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Filed347 — Weekly certified payroll. From a CSV.</title>
-  <meta name="description" content="WH-347 for public-works subs. You already have the payroll file. $69/mo.">
+  <meta name="description" content="Software generates a WH-347. You review it, mark the boxes, sign it, and file it.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
-    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; --acc2:#1e3a8a; }
+    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; }
     body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); }
     .top { border-bottom:1px solid var(--line); background:#fff; }
     .top .wrap, .wrap { max-width:760px; margin:0 auto; padding:0 1rem; }
@@ -15,21 +15,26 @@
     .mark { width:28px; height:28px; }
     h1 { font-size:2rem; letter-spacing:-.03em; line-height:1.15; margin:.2rem 0 .55rem; }
     .sub { color:var(--muted); font-size:1.05rem; margin:0 0 1.1rem; }
-    ul { padding-left:1.15rem; }
+    ul, ol { padding-left:1.2rem; }
     li { margin:.4rem 0; }
     h2 { font-size:1.05rem; margin:1.6rem 0 .4rem; }
-    ol { padding-left:1.2rem; }
+    .samples { display:flex; gap:1.25rem; flex-wrap:wrap; margin:0 0 .45rem; }
+    .samples a { font-weight:750; color:var(--acc); }
     .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.1rem; margin:1.4rem 0; }
     label { display:block; font-weight:650; margin:.7rem 0 .3rem; }
-    input, textarea { width:100%; box-sizing:border-box; font:inherit; padding:.65rem .7rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; }
+    input, textarea, select { width:100%; box-sizing:border-box; font:inherit; padding:.65rem .7rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; }
     textarea { min-height:7rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+    fieldset { border:1px solid var(--line); border-radius:10px; margin:.8rem 0; padding:.6rem .8rem 0.85rem; }
+    legend { font-weight:650; padding:0 .3rem; }
+    .opt { display:flex; align-items:center; gap:.5rem; font-weight:550; margin:.35rem 0; }
+    .opt input { width:auto; margin:0; }
     .btn { display:block; width:100%; margin-top:1rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:.9rem; border-radius:10px; cursor:pointer; }
     .btn:disabled { opacity:.5; cursor:not-allowed; }
-    .price { font-weight:750; }
     .not { color:var(--muted); font-size:.92rem; }
     .err { color:#b91c1c; }
     footer { color:#78716c; font-size:.85rem; padding:1rem 0 3rem; }
+    footer a { color:inherit; }
     @media (max-width: 620px) { .grid { grid-template-columns:1fr; } h1 { font-size:1.65rem; } }
   </style>
 </head>
@@ -40,58 +45,151 @@
   </div></div>
   <div class="wrap" style="padding-top:1.6rem">
     <h1>Weekly certified payroll. From a CSV.</h1>
-    <p class="sub">WH-347 for public-works subs. You already have the payroll file.</p>
+    <p class="sub">Software generates a WH-347. You review it, mark the boxes, sign it, and file it.</p>
+
+    <p class="samples">
+      <a href="/sample-wh347.pdf">Sample WH-347 (PDF)</a>
+      <a href="/sample.csv">Sample payroll CSV</a>
+    </p>
+    <p>The form on this page is how you make your own. Look at the sample first.</p>
+
+    <h2>What it does</h2>
     <ul>
-      <li>Drop the week's payroll CSV. Get a WH-347, not a blank form to retype.</li>
-      <li>Built for the sub who has to file every week, not the GC's office.</li>
-      <li>$69 a month. Not Knowify. Not a lawyer.</li>
+      <li>You export a week of payroll to CSV. We print a WH-347 payroll table and the Statement of Compliance wording.</li>
+      <li>Certification boxes are printed as text and left unmarked. Signature lines stay blank.</li>
+      <li>Wage determination is printed only as you pasted it. We do not invent a WD number.</li>
+      <li>Last four of the employee id only. Never a full SSN.</li>
+      <li>$69 a month when checkout is live. Not Knowify. Not a lawyer.</li>
     </ul>
+
+    <h2>What you still do</h2>
+    <p>Review the PDF. Mark the boxes that apply (prime / sub / final payroll if they are on the form). Sign it. File it with the GC. We do not file it. We do not say you are compliant.</p>
+
+    <h2>What it is not</h2>
+    <ul>
+      <li>Not Knowify. We do not run the job or the back office.</li>
+      <li>Not a lawyer. Not a law firm. Not a legal opinion.</li>
+      <li>Not LCPtracker, eBacon, or a DIR portal. If your GC only takes those, this PDF may be unused.</li>
+      <li>Not a blank form to retype. The point is the table comes from the file.</li>
+    </ul>
+
     <h2>How it works</h2>
     <ol>
-      <li>Export the week's payroll to CSV.</li>
-      <li>Upload it.</li>
-      <li>File this week.</li>
+      <li>Look at the sample PDF and the sample CSV.</li>
+      <li>Export one week of payroll. Last-4 only. No full SSN.</li>
+      <li>Paste the project fields you already have, including the WD from the contract.</li>
+      <li>Generate the WH-347.</li>
+      <li>You review, mark boxes, sign, and file.</li>
     </ol>
-    <p class="not"><strong>What it is not.</strong> Not Knowify. We do not run the job or the whole back office. Not a lawyer. We do not say you are compliant. Not a blank PDF. The point is the form comes from the file you already export.</p>
+
     <form class="card" id="f">
-      <p class="price">$69/mo</p>
       <label for="contractor">Contractor / sub name</label>
       <input id="contractor" required maxlength="120" autocomplete="organization">
+
       <label for="address">Address</label>
       <input id="address" required maxlength="200" autocomplete="street-address">
+
       <div class="grid">
-        <div><label for="project">Project name</label><input id="project" required maxlength="160"></div>
-        <div><label for="contractNo">Project / contract no.</label><input id="contractNo" maxlength="80"></div>
+        <div>
+          <label for="project">Project name</label>
+          <input id="project" required maxlength="160">
+        </div>
+        <div>
+          <label for="contractNo">Project / contract no.</label>
+          <input id="contractNo" maxlength="80">
+        </div>
       </div>
+
       <label for="location">Project location</label>
       <input id="location" required maxlength="160">
+
       <div class="grid">
-        <div><label for="weekEnding">Week ending</label><input id="weekEnding" required maxlength="40" placeholder="YYYY-MM-DD"></div>
-        <div><label for="payrollNo">Payroll no.</label><input id="payrollNo" maxlength="20"></div>
+        <div>
+          <label for="weekEnding">Week ending</label>
+          <input id="weekEnding" required maxlength="40" placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+          <label for="payrollNo">Payroll no.</label>
+          <input id="payrollNo" maxlength="20">
+        </div>
       </div>
-      <label for="wageDetermination">Wage determination (paste; do not invent WD numbers)</label>
-      <textarea id="wageDetermination" maxlength="500" placeholder="Paste the WD number(s) from the contract"></textarea>
+
+      <fieldset>
+        <legend>Prime contractor / Subcontractor</legend>
+        <label class="opt"><input type="radio" name="role" value="prime" required> Prime contractor</label>
+        <label class="opt"><input type="radio" name="role" value="subcontractor" required> Subcontractor</label>
+      </fieldset>
+
+      <label class="opt"><input type="checkbox" id="finalPayroll"> Final payroll this project?</label>
+
+      <label for="wageDetermination">Paste the WD number(s) from the contract. Do not invent one.</label>
+      <textarea id="wageDetermination" maxlength="500"></textarea>
+
       <div class="grid">
-        <div><label for="officialName">Certifying official name (optional)</label><input id="officialName" maxlength="80"></div>
-        <div><label for="officialTitle">Title (optional)</label><input id="officialTitle" maxlength="80"></div>
+        <div>
+          <label for="officialName">Certifying official name (optional)</label>
+          <input id="officialName" maxlength="80">
+        </div>
+        <div>
+          <label for="officialTitle">Title (optional)</label>
+          <input id="officialTitle" maxlength="80">
+        </div>
       </div>
       <div class="grid">
-        <div><label for="officialPhone">Phone (optional)</label><input id="officialPhone" maxlength="40"></div>
-        <div><label for="officialEmail">Official email (optional)</label><input id="officialEmail" type="email" maxlength="200"></div>
+        <div>
+          <label for="officialPhone">Phone (optional)</label>
+          <input id="officialPhone" maxlength="40">
+        </div>
+        <div>
+          <label for="officialEmail">Official email (optional)</label>
+          <input id="officialEmail" type="email" maxlength="200">
+        </div>
       </div>
+
       <label for="email">Email for Stripe</label>
-      <input id="email" type="email" required autocomplete="email">
+      <input id="email" type="email" autocomplete="email">
+
       <label for="csvfile">Payroll CSV</label>
       <input id="csvfile" type="file" accept=".csv,text/csv,text/plain">
-      <label for="csv">Or paste CSV</label>
-      <textarea id="csv" placeholder="Gusto / QBO-ish headers. Last 4 of SSN only. Never a full SSN."></textarea>
-      <button class="btn" type="submit" id="go">File this week</button>
-      <p class="not" id="paynote">Opens Stripe Checkout for $69/mo. Software builds the WH-347 from your CSV. No human queue. You review and sign.</p>
+      <label for="csv">Last 4 of SSN only. Never a full SSN.</label>
+      <textarea id="csv"></textarea>
+
+      <button class="btn" type="submit" id="go">Generate the WH-347</button>
+      <p class="not" id="paynote">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
       <p class="err" id="err" hidden></p>
     </form>
+
+    <h2 id="privacy">Privacy</h2>
+    <p><strong>Who this is for.</strong> Public-works subcontractors filing a WH-347. Not the public. Not employees.</p>
+    <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, email. A billing email for Stripe when checkout is live.</p>
+    <p><strong>SSN.</strong> Last four only. Do not upload a full Social Security number. If a cell looks longer than four digits, we keep the last four.</p>
+    <p><strong>How long the CSV lives.</strong></p>
+    <ul>
+      <li>The CSV is read in your browser.</li>
+      <li>It sits in your browser session until you download the PDF or close the tab.</li>
+      <li>The server sees the CSV only in the request that builds the PDF. That request is not written to a payroll database or a disk folder in this product.</li>
+      <li>After that request ends, we do not keep the CSV.</li>
+      <li>If you close the tab before download, the copy in your browser is gone. We cannot rebuild it from email.</li>
+    </ul>
+    <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s to any Seoul Web Design or seoulwebdesign.com address. There is no payroll inbox. Payroll data does not belong in email.</p>
+    <p><strong>Not a law firm.</strong> This is software that fills a form from your file.</p>
+
+    <h2 id="terms">Short terms</h2>
+    <ol>
+      <li>Filed347 is software. It generates a WH-347-style PDF from the CSV and fields you provide.</li>
+      <li>You are responsible for reviewing the PDF, marking the boxes that apply, signing it, and filing it. We do not file it for you.</li>
+      <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC’s process.</li>
+      <li>We do not invent wage determinations. You paste the WD from the contract. Sample files use SAMPLE workers and a SAMPLE job.</li>
+      <li>Do not upload a full SSN. Last-4 only.</li>
+      <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused. No refund language until Stripe is live and CoS writes it.</li>
+      <li>$69/mo applies only when Stripe checkout is live. It is not live now. No charge can be made.</li>
+      <li>We can refuse a file that includes a full SSN or that we cannot parse.</li>
+      <li>These terms are the whole deal until a later dated rewrite.</li>
+    </ol>
+
     <footer>
-      <p>Filed347. Software, no human queue. Not a legal opinion. You must review and sign. We do not say you are compliant.</p>
-      <p>Contact: <a href="mailto:stevie@seoulwebdesign.com">stevie@seoulwebdesign.com</a></p>
+      <p>Filed347. Software. Not a legal opinion. You review, mark boxes, sign, and file.</p>
+      <p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
     </footer>
   </div>
   <script>
@@ -99,14 +197,13 @@
     const go = document.getElementById("go");
     const err = document.getElementById("err");
     const note = document.getElementById("paynote");
+    const CAPTION_OFF = "Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.";
+    const CAPTION_ON = "Opens Stripe Checkout for $69/mo. Then you get a WH-347 from your CSV. You still review, mark boxes, sign, and file.";
     let stripeLive = false;
     fetch("/api/status").then(r => r.json()).then(s => {
       stripeLive = !!(s && s.live);
-      if (!stripeLive) {
-        go.disabled = true;
-        note.textContent = "Checkout is not live yet. Stripe live keys are not on this host. No charge can be made.";
-      }
-    }).catch(() => {});
+      note.textContent = stripeLive ? CAPTION_ON : CAPTION_OFF;
+    }).catch(() => { note.textContent = CAPTION_OFF; });
     document.getElementById("csvfile").addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -117,9 +214,16 @@
     document.getElementById("f").addEventListener("submit", async (e) => {
       e.preventDefault();
       err.hidden = true;
-      if (!stripeLive) return;
       const body = {};
       for (const k of FIELDS) body[k] = document.getElementById(k).value;
+      const roleEl = document.querySelector('input[name="role"]:checked');
+      if (!roleEl) {
+        err.hidden = false;
+        err.textContent = "Choose prime contractor or subcontractor.";
+        return;
+      }
+      body.role = roleEl.value;
+      body.finalPayroll = document.getElementById("finalPayroll").checked;
       if (!body.csv || !body.csv.trim()) {
         err.hidden = false;
         err.textContent = "Need a payroll CSV.";
@@ -128,19 +232,44 @@
       try { sessionStorage.setItem("filed347", JSON.stringify(body)); } catch (_) {}
       go.disabled = true;
       try {
-        const r = await fetch("/api/checkout", {
+        if (stripeLive) {
+          if (!body.email || !body.email.includes("@")) {
+            err.hidden = false;
+            err.textContent = "Need an email for Stripe.";
+            go.disabled = false;
+            return;
+          }
+          const r = await fetch("/api/checkout", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email: body.email })
+          });
+          const d = await r.json();
+          if (!r.ok || !d.url) throw new Error(d.error || "checkout_failed");
+          location.href = d.url;
+          return;
+        }
+        const r = await fetch("/api/pdf", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ email: body.email })
+          body: JSON.stringify(body)
         });
-        const d = await r.json();
-        if (!r.ok || !d.url) throw new Error(d.error || "checkout_failed");
-        location.href = d.url;
+        if (!r.ok) throw new Error("pdf_failed");
+        const id = r.headers.get("x-filed347-id") || r.headers.get("x-form-id");
+        if (id) {
+          location.href = "/thanks.html?id=" + encodeURIComponent(id);
+          return;
+        }
+        const blob = await r.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "filed347-wh347.pdf";
+        a.click();
       } catch (_) {
         err.hidden = false;
-        err.textContent = "Could not start Checkout. No charge was made.";
-        go.disabled = false;
+        err.textContent = stripeLive ? "Could not start Checkout. No charge was made." : "Could not generate the WH-347.";
       }
+      go.disabled = false;
     });
   </script>
 </body>
