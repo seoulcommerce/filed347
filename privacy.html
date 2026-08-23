@@ -8,8 +8,11 @@
   <style>
     body { margin:0; font-family: ui-sans-serif, system-ui, sans-serif; color:#1c1917; background:#f5f4f1; }
     .wrap { max-width:760px; margin:0 auto; padding:1.6rem 1rem 3rem; }
-    a { color:#1d4ed8; }
-    li { margin:.4rem 0; }
+    h1 { font-size:1.6rem; letter-spacing:-.03em; }
+    h2 { font-size:1.05rem; margin:1.4rem 0 .4rem; }
+    p, li { line-height:1.5; }
+    .not { color:#57534e; }
+    a { color:#1e3a8a; }
     footer { color:#78716c; font-size:.85rem; margin-top:2rem; }
   </style>
 </head>
@@ -17,20 +20,25 @@
   <div class="wrap">
     <p><a href="/">Filed347</a></p>
     <h1>Privacy</h1>
-    <p><strong>Who this is for.</strong> Public-works subcontractors filing a WH-347. Not the public. Not employees.</p>
-    <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, email. A billing email for Stripe when checkout is live.</p>
-    <p><strong>SSN.</strong> Last four only. Do not upload a full Social Security number. If a cell looks longer than four digits, we keep the last four.</p>
-    <p><strong>How long the CSV lives.</strong></p>
-    <ul>
-      <li>The CSV is read in your browser.</li>
-      <li>It sits in your browser session until you download the PDF or close the tab.</li>
-      <li>The server sees the CSV only in the request that builds the PDF. That request is not written to a payroll database or a disk folder in this product.</li>
-      <li>After that request ends, we do not keep the CSV.</li>
-      <li>If you close the tab before download, the copy in your browser is gone. We cannot rebuild it from email.</li>
-    </ul>
-    <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s to any Seoul Web Design or seoulwebdesign.com address. There is no payroll inbox. Payroll data does not belong in email.</p>
-    <p><strong>Not a law firm.</strong> This is software that fills a form from your file.</p>
-    <footer>Filed347. Software. Not a legal opinion. You review, mark boxes, sign, and file.</footer>
+    <p class="not">Filed347. Not a legal opinion. We do not file for you. We do not say you are compliant.</p>
+    <h2>Who this is for</h2>
+    <p>Public-works subcontractors generating a WH-347. Not the public. Not employees.</p>
+    <h2>What we ask for</h2>
+    <p>Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, and email. An email only if you later subscribe. Prime or subcontractor, and whether this is the final payroll.</p>
+    <h2>No full SSN</h2>
+    <p>Last 4 only. We drop anything that looks like a 9-digit SSN. Do not upload a full Social Security number. Identifying numbers on the PDF are last four characters only.</p>
+    <h2>How long data lives</h2>
+    <p>The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record.</p>
+    <p>The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory and under <code>/tmp/filed347/{id}.json</code> and <code>{id}.pdf</code> for <strong>24 hours</strong>, then gone. After 24 hours the id no longer downloads.</p>
+    <p>sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
+    <h2>Email</h2>
+    <p>Contact: Filed347. We do not accept payroll CSVs by email. Do not send payroll files, employee names, or last-4s by email. There is no payroll inbox.</p>
+    <h2>Not a law firm</h2>
+    <p>This is software that fills a form from your file. Not a legal opinion. We do not file for you. We do not say you are compliant.</p>
+    <footer>
+      <p>Filed347. <a href="/terms">Terms</a> · <a href="/">Home</a></p>
+      <p>Contact: Filed347. We do not accept payroll CSVs by email.</p>
+    </footer>
   </div>
 </body>
 </html>
