@@ -87,7 +87,7 @@ async function put(a, b, c) {
   
   const blob = await getBlobClient();
   if (!blob) {
-    throw new Error("BLOB_READ_WRITE_TOKEN not configured. PDF cannot be stored for cross-lambda retrieval.");
+    return { id: null, persisted: false };
   }
   
   try {
@@ -102,12 +102,11 @@ async function put(a, b, c) {
       addRandomSuffix: false,
       cacheControlMaxAge: TTL_MS / 1000
     });
+    
+    return { id, persisted: true };
   } catch (err) {
-    throw new Error(`Failed to store PDF in blob: ${err.message}`);
+    return { id: null, persisted: false };
   }
-  
-  sweep();
-  return id;
 }
 
 async function get(id) {

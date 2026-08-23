@@ -11,6 +11,9 @@ function sendPdf(res, pdf, name, id) {
     res.setHeader("x-form-id", id);
     res.setHeader("x-filed347-id", id);
     res.setHeader("access-control-expose-headers", "x-form-id, x-filed347-id");
+  } else {
+    res.setHeader("x-filed347-persist", "unavailable");
+    res.setHeader("access-control-expose-headers", "x-filed347-persist");
   }
   res.end(pdf);
 }
@@ -52,7 +55,8 @@ module.exports = async function handler(req, res) {
 
   const pdf = buildPdf(form, { watermark: true });
   const name = filenameFor(form);
-  const id = await store.put(form, pdf, name);
   
-  sendPdf(res, pdf, name, id);
+  const result = await store.put(form, pdf, name);
+  sendPdf(res, pdf, name, result.persisted ? result.id : null);
+};
 };
