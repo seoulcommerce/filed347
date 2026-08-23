@@ -87,6 +87,7 @@ async function put(a, b, c) {
   
   const blob = await getBlobClient();
   if (!blob) {
+    sweep();
     return { id: null, persisted: false };
   }
   
@@ -103,8 +104,10 @@ async function put(a, b, c) {
       cacheControlMaxAge: TTL_MS / 1000
     });
     
+    sweep();
     return { id, persisted: true };
   } catch (err) {
+    sweep();
     return { id: null, persisted: false };
   }
 }
