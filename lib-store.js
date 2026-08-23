@@ -3,8 +3,32 @@ const path = require("path");
 const crypto = require("crypto");
 
 const TTL_MS = 24 * 60 * 60 * 1000;
+const TTL_SEC = 86400;
 const DIR = "/tmp/filed347";
 const mem = new Map();
+
+let vercelCache = null;
+
+async function getVercelCache() {
+  if (vercelCache) return vercelCache;
+  try {
+    const { getCache } = require("@vercel/functions");
+    vercelCache = getCache({ namespace: "filed347" });
+    return vercelCache;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function getBlobStore() {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
+  try {
+    const { put, get } = require("@vercel/blob");
+    return { put, get };
+  } catch (_) {
+    return null;
+  }
+}
 
 function newId() {
   return crypto.randomBytes(12).toString("hex");
@@ -15,8 +39,7 @@ function ensureDir() {
 }
 
 function expired(rec) {
-  const ttl = rec && rec.ttl ? rec.ttl : TTL_MS;
-  return !rec || !rec.createdAt || (Date.now() - rec.createdAt) > ttl;
+  return !rec || !rec.createdAt || (Date.now() - rec.createdAt) > TTL_MS;
 }
 
 function del(id) {
@@ -47,7 +70,7 @@ function asPdf(x) {
   return null;
 }
 
-function put(a, b, c, customTtl) {
+async function put(a, b, c) {
   let form = {};
   let pdf = asPdf(a);
   let name = typeof b === "string" ? b : "";
@@ -59,28 +82,51 @@ function put(a, b, c, customTtl) {
   if (!pdf) pdf = Buffer.from("%PDF-1.4\n%%EOF\n");
   const id = newId();
   const createdAt = Date.now();
-  const ttl = typeof customTtl === "number" ? customTtl : TTL_MS;
   const safe = Object.assign({}, form || {}, { csv: "" });
-  const rec = { id, createdAt, ttl, form: safe, name: name || "filed347-wh347.pdf" };
+  // Never the CSV
+  const rec = { id, createdAt, form: safe, name: name || "filed347-wh347.pdf" };
+  
   mem.set(id, Object.assign({}, rec, { pdf }));
+  
   ensureDir();
   try {
     fs.writeFileSync(path.join(DIR, id + ".json"), JSON.stringify(rec));
     fs.writeFileSync(path.join(DIR, id + ".pdf"), pdf);
   } catch (_) {}
+  
+  try {
+    const cache = await getVercelCache();
+    if (cache) {
+      await cache.set(id + ".json", JSON.stringify(rec), { ttl: TTL_SEC });
+      await cache.set(id + ".pdf", pdf.toString("base64"), { ttl: TTL_SEC });
+    }
+  } catch (_) {}
+  
+  try {
+    const blob = await getBlobStore();
+    if (blob) {
+      await blob.put(`filed347/${id}.pdf`, pdf, {
+        access: "public",
+        addRandomSuffix: false
+      });
+    }
+  } catch (_) {}
+  
   sweep();
   return id;
 }
 
-function get(id) {
+async function get(id) {
   const key = String(id || "");
   if (!/^[a-f0-9]{16,32}$/.test(key)) return null;
+  
   let rec = mem.get(key);
   if (rec && expired(rec)) {
     del(key);
     return null;
   }
   if (rec && rec.pdf) return rec;
+  
   try {
     const j = JSON.parse(fs.readFileSync(path.join(DIR, key + ".json"), "utf8"));
     if (expired(j)) {
@@ -91,9 +137,60 @@ function get(id) {
     rec = Object.assign({}, j, { pdf });
     mem.set(key, rec);
     return rec;
-  } catch (_) {
-    return null;
-  }
+  } catch (_) {}
+  
+  try {
+    const cache = await getVercelCache();
+    if (cache) {
+      const jsonStr = await cache.get(key + ".json");
+      const pdfB64 = await cache.get(key + ".pdf");
+      if (jsonStr && pdfB64) {
+        const j = JSON.parse(jsonStr);
+        if (expired(j)) return null;
+        const pdf = Buffer.from(pdfB64, "base64");
+        rec = Object.assign({}, j, { pdf });
+        mem.set(key, rec);
+        return rec;
+      }
+    }
+  } catch (_) {}
+  
+  return null;
 }
 
-module.exports = { put, get, del, sweep, TTL_MS, DIR };
+async function checkPreviewLimit(identifier) {
+  const key = "preview_limit:" + identifier;
+  
+  const cached = mem.get(key);
+  if (cached && Date.now() - cached < TTL_MS) {
+    return true;
+  }
+  
+  try {
+    const cache = await getVercelCache();
+    if (cache) {
+      const val = await cache.get(key);
+      if (val) {
+        mem.set(key, Date.now());
+        return true;
+      }
+    }
+  } catch (_) {}
+  
+  return false;
+}
+
+async function recordPreview(identifier) {
+  const key = "preview_limit:" + identifier;
+  const now = Date.now();
+  mem.set(key, now);
+  
+  try {
+    const cache = await getVercelCache();
+    if (cache) {
+      await cache.set(key, "1", { ttl: TTL_SEC });
+    }
+  } catch (_) {}
+}
+
+module.exports = { put, get, del, sweep, TTL_MS, DIR, checkPreviewLimit, recordPreview };
