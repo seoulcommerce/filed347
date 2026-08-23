@@ -8,34 +8,47 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
     :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; }
-    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
     .top { border-bottom:1px solid var(--line); background:#fff; }
-    .top .wrap, .wrap { max-width:760px; margin:0 auto; padding:0 1rem; }
+    .top .wrap, .wrap { max-width:900px; margin:0 auto; padding:0 1.25rem; }
     .top .wrap { display:flex; align-items:center; gap:.6rem; height:56px; }
     .mark { width:28px; height:28px; }
-    h1 { font-size:2rem; letter-spacing:-.03em; line-height:1.15; margin:.2rem 0 .55rem; }
-    .sub { color:var(--muted); font-size:1.05rem; margin:0 0 1.1rem; }
+    h1 { font-size:2.5rem; letter-spacing:-.03em; line-height:1.15; margin:2.5rem 0 .8rem; font-weight:800; }
+    .sub { color:var(--muted); font-size:1.2rem; margin:0 0 2.5rem; max-width:700px; }
     ul, ol { padding-left:1.2rem; }
     li { margin:.4rem 0; }
-    h2 { font-size:1.05rem; margin:1.6rem 0 .4rem; }
-    .samples { display:flex; gap:1.25rem; flex-wrap:wrap; margin:0 0 .45rem; }
-    .samples a { font-weight:750; color:var(--acc); }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.1rem; margin:1.4rem 0; }
-    label { display:block; font-weight:650; margin:.7rem 0 .3rem; }
-    input, textarea, select { width:100%; box-sizing:border-box; font:inherit; padding:.65rem .7rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; }
-    textarea { min-height:7rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
-    fieldset { border:1px solid var(--line); border-radius:10px; margin:.8rem 0; padding:.6rem .8rem 0.85rem; }
-    legend { font-weight:650; padding:0 .3rem; }
-    .opt { display:flex; align-items:center; gap:.5rem; font-weight:550; margin:.35rem 0; }
+    h2 { font-size:1.35rem; margin:2.5rem 0 .8rem; font-weight:700; }
+    .hero { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.8rem; margin:2.5rem 0; }
+    .sample-preview { text-align:center; }
+    .sample-frame { background:#fff; border:2px solid var(--line); border-radius:12px; padding:1.5rem; margin:1rem 0; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+    .sample-placeholder { background:#fafafa; border:2px dashed var(--line); border-radius:8px; padding:3rem 2rem; text-align:center; color:var(--muted); font-size:.95rem; }
+    .sample-links { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin:1.5rem 0; }
+    .sample-links a { display:inline-block; font-weight:650; color:#fff; background:var(--acc); padding:.8rem 1.5rem; border-radius:10px; text-decoration:none; transition:opacity .2s; }
+    .sample-links a:hover { opacity:.9; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.5rem; margin:1.8rem 0; }
+    label { display:block; font-weight:650; margin:.85rem 0 .35rem; font-size:.95rem; }
+    input, textarea, select { width:100%; box-sizing:border-box; font:inherit; padding:.75rem .85rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; font-size:.95rem; }
+    textarea { min-height:8rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; resize:vertical; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; }
+    fieldset { border:1px solid var(--line); border-radius:10px; margin:.9rem 0; padding:.7rem .9rem .95rem; }
+    legend { font-weight:650; padding:0 .4rem; }
+    .opt { display:flex; align-items:center; gap:.5rem; font-weight:550; margin:.4rem 0; }
     .opt input { width:auto; margin:0; }
-    .btn { display:block; width:100%; margin-top:1rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:.9rem; border-radius:10px; cursor:pointer; }
+    .btn { display:block; width:100%; margin-top:1.2rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:1rem; border-radius:10px; cursor:pointer; font-size:1rem; transition:opacity .2s; }
+    .btn:hover:not(:disabled) { opacity:.9; }
     .btn:disabled { opacity:.5; cursor:not-allowed; }
-    .not { color:var(--muted); font-size:.92rem; }
-    .err { color:#b91c1c; }
-    footer { color:#78716c; font-size:.85rem; padding:1rem 0 3rem; }
-    footer a { color:inherit; }
-    @media (max-width: 620px) { .grid { grid-template-columns:1fr; } h1 { font-size:1.65rem; } }
+    .btn-secondary { background:#57534e; margin-top:.8rem; }
+    .not { color:var(--muted); font-size:.92rem; margin-top:.8rem; }
+    .err { color:#b91c1c; margin-top:.8rem; }
+    footer { color:#78716c; font-size:.88rem; padding:2rem 0 4rem; border-top:1px solid var(--line); margin-top:3rem; }
+    footer a { color:inherit; text-decoration:underline; }
+    @media (max-width: 768px) { 
+      .grid { grid-template-columns:1fr; } 
+      h1 { font-size:1.9rem; margin:1.8rem 0 .6rem; } 
+      .sub { font-size:1.05rem; }
+      .wrap { padding:0 1rem; }
+      .sample-frame { padding:1rem; }
+    }
   </style>
 </head>
 <body>
@@ -43,46 +56,35 @@
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1d4ed8"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text></svg>
     <strong>Filed347</strong>
   </div></div>
-  <div class="wrap" style="padding-top:1.6rem">
+  
+  <div class="wrap">
     <h1>Weekly certified payroll. From a CSV.</h1>
     <p class="sub">Software generates a WH-347. You review it, mark the boxes, sign it, and file it.</p>
 
-    <p class="samples">
-      <a href="/sample-wh347.pdf">Sample WH-347 (PDF)</a>
-      <a href="/sample.csv">Sample payroll CSV</a>
-    </p>
-    <p>The form on this page is how you make your own. Look at the sample first.</p>
-
-    <h2>What it does</h2>
-    <ul>
-      <li>You export a week of payroll to CSV. We print a WH-347 payroll table and the Statement of Compliance wording.</li>
-      <li>Certification boxes are printed as text and left unmarked. Signature lines stay blank.</li>
-      <li>Wage determination is printed only as you pasted it. We do not invent a WD number.</li>
-      <li>Last four of the employee id only. Never a full SSN.</li>
-      <li>$69 a month when checkout is live. Not Knowify. Not a lawyer.</li>
-    </ul>
+    <div class="hero">
+      <div class="sample-preview">
+        <div class="sample-frame">
+          <div class="sample-placeholder">
+            <strong>Sample WH-347 Form</strong><br>
+            Page 1 showing payroll table with SAMPLE workers and SAMPLE County Culvert project.<br>
+            Download the full PDF below to see the complete form.
+          </div>
+        </div>
+        <div class="sample-links">
+          <a href="/sample-wh347.pdf" download>Download Sample WH-347 (PDF)</a>
+          <a href="/sample.csv" download>Download Sample CSV</a>
+          <a href="/COLUMN-MAPPING.md">CSV Column Guide</a>
+        </div>
+        <p class="not">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
+      </div>
+    </div>
 
     <h2>What you still do</h2>
     <p>Review the PDF. Mark the boxes that apply (prime / sub / final payroll if they are on the form). Sign it. File it with the GC. We do not file it. We do not say you are compliant.</p>
 
-    <h2>What it is not</h2>
-    <ul>
-      <li>Not Knowify. We do not run the job or the back office.</li>
-      <li>Not a lawyer. Not a law firm. Not a legal opinion.</li>
-      <li>Not LCPtracker, eBacon, or a DIR portal. If your GC only takes those, this PDF may be unused.</li>
-      <li>Not a blank form to retype. The point is the table comes from the file.</li>
-    </ul>
-
-    <h2>How it works</h2>
-    <ol>
-      <li>Look at the sample PDF and the sample CSV.</li>
-      <li>Export one week of payroll. Last-4 only. No full SSN.</li>
-      <li>Paste the project fields you already have, including the WD from the contract.</li>
-      <li>Generate the WH-347.</li>
-      <li>You review, mark boxes, sign, and file.</li>
-    </ol>
-
     <form class="card" id="f">
+      <h2 style="margin-top:0">Generate your WH-347</h2>
+      
       <label for="contractor">Contractor / sub name</label>
       <input id="contractor" required maxlength="120" autocomplete="organization">
 
@@ -155,11 +157,12 @@
       <textarea id="csv"></textarea>
 
       <button class="btn" type="submit" id="go">Generate the WH-347</button>
+      <button class="btn btn-secondary" type="button" id="subscribe" disabled>Subscribe ($69/mo) — Not available</button>
       <p class="not" id="paynote">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
       <p class="err" id="err" hidden></p>
     </form>
 
-    <h2 id="privacy">Privacy</h2>
+    <h2>Privacy</h2>
     <p><strong>Who this is for.</strong> Public-works subcontractors filing a WH-347. Not the public. Not employees.</p>
     <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, email. A billing email for Stripe when checkout is live.</p>
     <p><strong>SSN.</strong> Last four only. Do not upload a full Social Security number. If a cell looks longer than four digits, we keep the last four.</p>
@@ -171,14 +174,13 @@
       <li>After that request ends, we do not keep the CSV.</li>
       <li>If you close the tab before download, the copy in your browser is gone. We cannot rebuild it from email.</li>
     </ul>
-    <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s to any Seoul Web Design or seoulwebdesign.com address. There is no payroll inbox. Payroll data does not belong in email.</p>
     <p><strong>Not a law firm.</strong> This is software that fills a form from your file.</p>
 
-    <h2 id="terms">Short terms</h2>
+    <h2>Short terms</h2>
     <ol>
       <li>Filed347 is software. It generates a WH-347-style PDF from the CSV and fields you provide.</li>
       <li>You are responsible for reviewing the PDF, marking the boxes that apply, signing it, and filing it. We do not file it for you.</li>
-      <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC’s process.</li>
+      <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC's process.</li>
       <li>We do not invent wage determinations. You paste the WD from the contract. Sample files use SAMPLE workers and a SAMPLE job.</li>
       <li>Do not upload a full SSN. Last-4 only.</li>
       <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused. No refund language until Stripe is live and CoS writes it.</li>
@@ -192,18 +194,26 @@
       <p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
     </footer>
   </div>
+  
   <script>
     const FIELDS = ["contractor","address","project","contractNo","location","weekEnding","payrollNo","wageDetermination","officialName","officialTitle","officialPhone","officialEmail","email","csv"];
     const go = document.getElementById("go");
+    const subscribe = document.getElementById("subscribe");
     const err = document.getElementById("err");
     const note = document.getElementById("paynote");
     const CAPTION_OFF = "Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.";
     const CAPTION_ON = "Opens Stripe Checkout for $69/mo. Then you get a WH-347 from your CSV. You still review, mark boxes, sign, and file.";
     let stripeLive = false;
+    
     fetch("/api/status").then(r => r.json()).then(s => {
       stripeLive = !!(s && s.live);
       note.textContent = stripeLive ? CAPTION_ON : CAPTION_OFF;
+      if (stripeLive) {
+        subscribe.disabled = false;
+        subscribe.textContent = "Subscribe ($69/mo)";
+      }
     }).catch(() => { note.textContent = CAPTION_OFF; });
+    
     document.getElementById("csvfile").addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -211,6 +221,7 @@
       reader.onload = () => { document.getElementById("csv").value = String(reader.result || ""); };
       reader.readAsText(f);
     });
+    
     document.getElementById("f").addEventListener("submit", async (e) => {
       e.preventDefault();
       err.hidden = true;
@@ -229,7 +240,6 @@
         err.textContent = "Need a payroll CSV.";
         return;
       }
-      try { sessionStorage.setItem("filed347", JSON.stringify(body)); } catch (_) {}
       go.disabled = true;
       try {
         if (stripeLive) {
@@ -257,7 +267,7 @@
         if (!r.ok) throw new Error("pdf_failed");
         const id = r.headers.get("x-filed347-id") || r.headers.get("x-form-id");
         if (id) {
-          location.href = "/thanks.html?id=" + encodeURIComponent(id);
+          location.href = "/thanks?id=" + encodeURIComponent(id);
           return;
         }
         const blob = await r.blob();

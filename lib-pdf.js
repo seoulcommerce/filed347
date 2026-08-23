@@ -62,8 +62,12 @@ function R(ops, x, y, w, h, sw) {
   ops.push((sw || 0.5) + " w " + x.toFixed(2) + " " + y.toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2) + " re S");
 }
 
-function checkbox(ops, x, y) {
+function checkbox(ops, x, y, checked) {
   R(ops, x, y, 8, 8, 0.7);
+  if (checked) {
+    ops.push("0.9 w " + (x + 1).toFixed(2) + " " + (y + 1).toFixed(2) + " m " + (x + 7).toFixed(2) + " " + (y + 7).toFixed(2) + " l S");
+    ops.push("0.9 w " + (x + 7).toFixed(2) + " " + (y + 1).toFixed(2) + " m " + (x + 1).toFixed(2) + " " + (y + 7).toFixed(2) + " l S");
+  }
 }
 
 const FOOTER = "Filed347 generated this from your CSV. Not a legal opinion. You must review and sign. Software, no human queue.";
@@ -106,7 +110,10 @@ function buildPayrollPage(form, workers, startIndex, pageNo, pageCount) {
   const boxH = 54;
   R(ops, left, y - boxH, 760, boxH, 0.7);
   T(ops, "Prime contractor / Subcontractor:  [  ] Prime    [  ] Subcontractor   (mark the one that applies)", 7, left + 4, y - 11, false);
+  checkbox(ops, left + 186, y - 18, form.role === "prime");
+  checkbox(ops, left + 256, y - 18, form.role === "subcontractor");
   T(ops, "Final payroll this project?  [  ] Yes   (do not mark unless this is the last week)", 7, 430, y - 11, false);
+  checkbox(ops, 600, y - 18, form.finalPayroll);
   T(ops, "Name: " + clip(form.contractor || "", 8, 240), 8, left + 4, y - 24, false);
   T(ops, "Address: " + clip(form.address || "", 8, 300), 8, 300, y - 24, false);
   T(ops, "Project: " + clip(form.project || "", 8, 250), 8, left + 4, y - 36, false);
