@@ -23,8 +23,13 @@ module.exports = async (req, res) => {
       if (!result) {
         return res.json({ found: false });
       }
-      const text = await result.text();
-      return res.json({ found: true, content: text });
+      return res.json({ 
+        found: true, 
+        hasStream: !!result.stream,
+        hasText: typeof result.text,
+        hasArrayBuffer: typeof result.arrayBuffer,
+        keys: Object.keys(result)
+      });
     }
     
     res.json({ error: "invalid_action", available: ["list", "test-put", "test-get"] });
