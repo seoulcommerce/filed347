@@ -1,5 +1,10 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/**/*.js": {
+      "regions": ["iad1"]
+    }
+  },
   "rewrites": [
     {
       "source": "/sample-wh347.pdf",

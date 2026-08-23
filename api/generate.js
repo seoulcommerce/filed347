@@ -46,8 +46,8 @@ module.exports = async function handler(req, res) {
   }
 
   const form = parseForm(body);
-  const pdf = buildPdf(form);
+  const pdf = buildPdf(form, { watermark: false });
   const name = filenameFor(form);
-  const id = store.put(form, pdf, name);
+  const id = await store.put(form, pdf, name);
   sendPdf(res, pdf, name, id);
 };

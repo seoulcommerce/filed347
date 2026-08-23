@@ -1,5 +1,8 @@
 {
   "name": "filed347",
   "private": true,
-  "description": "Weekly certified payroll. CSV in, WH-347 PDF out. $69/mo."
+  "description": "Weekly certified payroll. CSV in, WH-347 PDF out. $69/mo.",
+  "dependencies": {
+    "@vercel/functions": "^1.4.1"
+  }
 }

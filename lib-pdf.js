@@ -324,7 +324,7 @@ function assemble(pages) {
   return Buffer.from(pdf, "latin1");
 }
 
-function buildPdf(input) {
+function buildPdf(input, options) {
   const form = input && input.workers ? input : parseForm(input || {});
   const workers = form.workers || [];
   const per = 8;
@@ -337,6 +337,15 @@ function buildPdf(input) {
     pages.push(buildPayrollPage(form, chunk, i * per, i + 1, pageCount));
   });
   pages.push(buildStatementPage(form, pageCount, pageCount));
+  
+  if (options && options.watermark) {
+    pages.forEach(p => {
+      p.ops.unshift("q 0.85 0.85 0.85 rg");
+      p.ops.unshift("BT /F2 42 Tf " + (p.w / 2 - 110).toFixed(2) + " " + (p.h / 2).toFixed(2) + " Td (PREVIEW) Tj ET");
+      p.ops.unshift("Q");
+    });
+  }
+  
   return assemble(pages);
 }
 
