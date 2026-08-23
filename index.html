@@ -85,7 +85,7 @@
     
     .hero-text h1 { 
       font-family: Georgia, Cambria, "Times New Roman", Times, serif;
-      font-size: 4.5rem;
+      font-size: 3.8rem;
       letter-spacing: -0.04em;
       line-height: 1.05;
       margin: 0 0 2rem;
@@ -100,6 +100,7 @@
     .hero-text h1 .line-two {
       display: block;
       font-style: italic;
+      white-space: nowrap;
     }
     
     .hero-aside {
@@ -115,22 +116,23 @@
     
     .sample-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 2rem;
       margin-bottom: 2.5rem;
       flex-wrap: wrap;
     }
     
     .sample-links a {
-      color: var(--ink);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: #d6d3d1;
-      font-size: 1rem;
-      transition: text-decoration-color 0.2s;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      transition: color 0.2s;
     }
     
     .sample-links a:hover {
-      text-decoration-color: var(--ink);
+      color: var(--ink);
     }
     
     .cta-group {
@@ -214,7 +216,7 @@
     }
     
     .product-inner {
-      max-width: 1280px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 0 3rem;
       position: relative;
@@ -223,10 +225,12 @@
     .product-frame {
       background: var(--card);
       border-radius: 12px;
-      padding: 2.5rem;
+      padding: 2rem;
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       position: relative;
       z-index: 2;
+      max-height: 520px;
+      overflow: hidden;
     }
     
     .product-frame::before {
@@ -239,6 +243,17 @@
       background: var(--accent);
       border-radius: 12px;
       z-index: -1;
+    }
+    
+    .product-frame::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--card));
+      pointer-events: none;
     }
     
     .sample-image {
@@ -298,23 +313,19 @@
       color: var(--ink);
     }
     
-    .pricing-band {
-      background: var(--accent);
-      padding: 5rem 0;
-    }
-    
-    .pricing-inner {
-      max-width: 600px;
+    .pricing-section {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 0 3rem;
+      padding: 5rem 3rem;
     }
     
     .pricing-card {
       background: var(--card);
       border-radius: 12px;
       padding: 3rem;
+      max-width: 600px;
       position: relative;
-      box-shadow: 8px 8px 0 var(--dark);
+      box-shadow: 8px 8px 0 var(--accent);
     }
     
     .price {
@@ -392,27 +403,36 @@
     }
     
     .form-card {
-      background: var(--card);
-      border: 1px solid #e7e5e1;
-      border-radius: 12px;
-      padding: 2.5rem;
+      background: transparent;
+      border: 0;
+      padding: 0;
     }
     
     label {
       display: block;
-      font-weight: 600;
-      margin: 1.25rem 0 0.5rem;
-      font-size: 0.95rem;
+      font-weight: 400;
+      margin: 1.5rem 0 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
     
     input, textarea, select {
       width: 100%;
       font: inherit;
-      padding: 0.75rem 1rem;
-      border: 1px solid #d6d3d1;
-      border-radius: 6px;
-      background: #fff;
+      padding: 0.75rem 0;
+      border: 0;
+      border-bottom: 1px solid #d6d3d1;
+      border-radius: 0;
+      background: transparent;
       font-size: 1rem;
+      color: var(--ink);
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: 0;
+      border-bottom-color: var(--ink);
     }
     
     textarea {
@@ -420,56 +440,64 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.9rem;
       resize: vertical;
+      padding-top: 0.5rem;
     }
     
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      gap: 2rem;
     }
     
     fieldset {
-      border: 1px solid #e7e5e1;
-      border-radius: 8px;
-      margin: 1.25rem 0;
-      padding: 1rem 1.25rem;
+      border: 0;
+      border-bottom: 1px solid #d6d3d1;
+      border-radius: 0;
+      margin: 1.5rem 0;
+      padding: 0 0 1rem;
     }
     
     legend {
-      font-weight: 600;
-      padding: 0 0.5rem;
-      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
     }
     
     .radio-option {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-weight: 500;
+      font-weight: 400;
       margin: 0.5rem 0;
     }
     
     .radio-option input {
       width: auto;
       margin: 0;
+      border: 0;
     }
     
     .checkbox-option {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-weight: 500;
-      margin: 1rem 0;
+      font-weight: 400;
+      margin: 1.5rem 0;
     }
     
     .checkbox-option input {
       width: auto;
       margin: 0;
+      border: 0;
     }
     
     .form-button {
       width: 100%;
-      margin-top: 1.5rem;
+      margin-top: 2rem;
     }
     
     .error-message {
@@ -543,10 +571,11 @@
       }
       
       .hero-text h1 {
-        font-size: 3.5rem;
+        font-size: 3.2rem;
       }
       
-      .hero-text h1 .line-one {
+      .hero-text h1 .line-one,
+      .hero-text h1 .line-two {
         white-space: normal;
       }
       
@@ -558,7 +587,7 @@
       .process-inner,
       .product-inner,
       .how-it-works,
-      .pricing-inner,
+      .pricing-section,
       .official-section,
       .form-section,
       .legal-section,
@@ -598,7 +627,8 @@
         margin-bottom: 1.5rem;
       }
       
-      .hero-text h1 .line-one {
+      .hero-text h1 .line-one,
+      .hero-text h1 .line-two {
         white-space: normal;
       }
       
@@ -638,6 +668,7 @@
       
       .product-frame {
         padding: 1.5rem;
+        max-height: 420px;
       }
       
       .product-frame::before {
@@ -649,17 +680,13 @@
         padding: 3rem 1.5rem;
       }
       
-      .pricing-band {
-        padding: 3rem 0;
-      }
-      
-      .pricing-inner {
-        padding: 0 1.5rem;
+      .pricing-section {
+        padding: 3rem 1.5rem;
       }
       
       .pricing-card {
         padding: 2rem;
-        box-shadow: 6px 6px 0 var(--dark);
+        box-shadow: 6px 6px 0 var(--accent);
       }
       
       .price {
@@ -673,12 +700,9 @@
         padding-right: 1.5rem;
       }
       
-      .form-card {
-        padding: 1.5rem;
-      }
-      
       .grid {
         grid-template-columns: 1fr;
+        gap: 0;
       }
       
       .footer-inner {
@@ -758,14 +782,12 @@
     </div>
   </div>
   
-  <div class="pricing-band">
-    <div class="pricing-inner">
-      <div class="pricing-card">
-        <div class="price">$69</div>
-        <div class="price-period">per month</div>
-        <p class="price-desc">Weekly WH-347 generation from a payroll CSV.</p>
-        <p class="price-note">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
-      </div>
+  <div class="pricing-section">
+    <div class="pricing-card">
+      <div class="price">$69</div>
+      <div class="price-period">per month</div>
+      <p class="price-desc">Weekly WH-347 generation from a payroll CSV.</p>
+      <p class="price-note">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
     </div>
   </div>
   
@@ -773,7 +795,7 @@
     <div class="official-eyebrow">Official form</div>
     <div class="official-content">
       <p>WH-347 is the Department of Labor's optional weekly certified payroll form for Davis-Bacon and Related Acts work. Instructions and the blank form live on dol.gov, not here:</p>
-      <p><a href="https://www.dol.gov/agencies/whd/forms/wh347" target="_blank" rel="noopener">https://www.dol.gov/agencies/whd/forms/wh347</a></p>
+      <p><a href="https://www.dol.gov/agencies/whd/forms/wh347" target="_blank" rel="noopener">WH-347 on dol.gov</a></p>
       <p>Use of that specific form is optional. Submitting weekly certified payroll is not. We generate a WH-347-style PDF from your file. We are not DOL.</p>
     </div>
   </div>
