@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filed347 — Weekly certified payroll. From a CSV.</title>
+  <meta name="description" content="WH-347 for public-works subs. You already have the payroll file. $69/mo.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; --acc2:#1e3a8a; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); }
+    .top { border-bottom:1px solid var(--line); background:#fff; }
+    .top .wrap, .wrap { max-width:760px; margin:0 auto; padding:0 1rem; }
+    .top .wrap { display:flex; align-items:center; gap:.6rem; height:56px; }
+    .mark { width:28px; height:28px; }
+    h1 { font-size:2rem; letter-spacing:-.03em; line-height:1.15; margin:.2rem 0 .55rem; }
+    .sub { color:var(--muted); font-size:1.05rem; margin:0 0 1.1rem; }
+    ul { padding-left:1.15rem; }
+    li { margin:.4rem 0; }
+    h2 { font-size:1.05rem; margin:1.6rem 0 .4rem; }
+    ol { padding-left:1.2rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.1rem; margin:1.4rem 0; }
+    label { display:block; font-weight:650; margin:.7rem 0 .3rem; }
+    input, textarea { width:100%; box-sizing:border-box; font:inherit; padding:.65rem .7rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; }
+    textarea { min-height:7rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+    .btn { display:block; width:100%; margin-top:1rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:.9rem; border-radius:10px; cursor:pointer; }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .price { font-weight:750; }
+    .not { color:var(--muted); font-size:.92rem; }
+    .err { color:#b91c1c; }
+    footer { color:#78716c; font-size:.85rem; padding:1rem 0 3rem; }
+    @media (max-width: 620px) { .grid { grid-template-columns:1fr; } h1 { font-size:1.65rem; } }
+  </style>
+</head>
+<body>
+  <div class="top"><div class="wrap">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1d4ed8"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text></svg>
+    <strong>Filed347</strong>
+  </div></div>
+  <div class="wrap" style="padding-top:1.6rem">
+    <h1>Weekly certified payroll. From a CSV.</h1>
+    <p class="sub">WH-347 for public-works subs. You already have the payroll file.</p>
+    <ul>
+      <li>Drop the week's payroll CSV. Get a WH-347, not a blank form to retype.</li>
+      <li>Built for the sub who has to file every week, not the GC's office.</li>
+      <li>$69 a month. Not Knowify. Not a lawyer.</li>
+    </ul>
+    <h2>How it works</h2>
+    <ol>
+      <li>Export the week's payroll to CSV.</li>
+      <li>Upload it.</li>
+      <li>File this week.</li>
+    </ol>
+    <p class="not"><strong>What it is not.</strong> Not Knowify. We do not run the job or the whole back office. Not a lawyer. We do not say you are compliant. Not a blank PDF. The point is the form comes from the file you already export.</p>
+    <form class="card" id="f">
+      <p class="price">$69/mo</p>
+      <label for="contractor">Contractor / sub name</label>
+      <input id="contractor" required maxlength="120" autocomplete="organization">
+      <label for="address">Address</label>
+      <input id="address" required maxlength="200" autocomplete="street-address">
+      <div class="grid">
+        <div><label for="project">Project name</label><input id="project" required maxlength="160"></div>
+        <div><label for="contractNo">Project / contract no.</label><input id="contractNo" maxlength="80"></div>
+      </div>
+      <label for="location">Project location</label>
+      <input id="location" required maxlength="160">
+      <div class="grid">
+        <div><label for="weekEnding">Week ending</label><input id="weekEnding" required maxlength="40" placeholder="YYYY-MM-DD"></div>
+        <div><label for="payrollNo">Payroll no.</label><input id="payrollNo" maxlength="20"></div>
+      </div>
+      <label for="wageDetermination">Wage determination (paste; do not invent WD numbers)</label>
+      <textarea id="wageDetermination" maxlength="500" placeholder="Paste the WD number(s) from the contract"></textarea>
+      <div class="grid">
+        <div><label for="officialName">Certifying official name (optional)</label><input id="officialName" maxlength="80"></div>
+        <div><label for="officialTitle">Title (optional)</label><input id="officialTitle" maxlength="80"></div>
+      </div>
+      <div class="grid">
+        <div><label for="officialPhone">Phone (optional)</label><input id="officialPhone" maxlength="40"></div>
+        <div><label for="officialEmail">Official email (optional)</label><input id="officialEmail" type="email" maxlength="200"></div>
+      </div>
+      <label for="email">Email for Stripe</label>
+      <input id="email" type="email" required autocomplete="email">
+      <label for="csvfile">Payroll CSV</label>
+      <input id="csvfile" type="file" accept=".csv,text/csv,text/plain">
+      <label for="csv">Or paste CSV</label>
+      <textarea id="csv" placeholder="Gusto / QBO-ish headers. Last 4 of SSN only. Never a full SSN."></textarea>
+      <button class="btn" type="submit" id="go">File this week</button>
+      <p class="not" id="paynote">Opens Stripe Checkout for $69/mo. Software builds the WH-347 from your CSV. No human queue. You review and sign.</p>
+      <p class="err" id="err" hidden></p>
+    </form>
+    <footer>
+      <p>Filed347. Software, no human queue. Not a legal opinion. You must review and sign. We do not say you are compliant.</p>
+      <p>Contact: <a href="mailto:stevie@seoulwebdesign.com">stevie@seoulwebdesign.com</a></p>
+    </footer>
+  </div>
+  <script>
+    const FIELDS = ["contractor","address","project","contractNo","location","weekEnding","payrollNo","wageDetermination","officialName","officialTitle","officialPhone","officialEmail","email","csv"];
+    const go = document.getElementById("go");
+    const err = document.getElementById("err");
+    const note = document.getElementById("paynote");
+    let stripeLive = false;
+    fetch("/api/status").then(r => r.json()).then(s => {
+      stripeLive = !!(s && s.live);
+      if (!stripeLive) {
+        go.disabled = true;
+        note.textContent = "Checkout is not live yet. Stripe live keys are not on this host. No charge can be made.";
+      }
+    }).catch(() => {});
+    document.getElementById("csvfile").addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { document.getElementById("csv").value = String(reader.result || ""); };
+      reader.readAsText(f);
+    });
+    document.getElementById("f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true;
+      if (!stripeLive) return;
+      const body = {};
+      for (const k of FIELDS) body[k] = document.getElementById(k).value;
+      if (!body.csv || !body.csv.trim()) {
+        err.hidden = false;
+        err.textContent = "Need a payroll CSV.";
+        return;
+      }
+      try { sessionStorage.setItem("filed347", JSON.stringify(body)); } catch (_) {}
+      go.disabled = true;
+      try {
+        const r = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email: body.email })
+        });
+        const d = await r.json();
+        if (!r.ok || !d.url) throw new Error(d.error || "checkout_failed");
+        location.href = d.url;
+      } catch (_) {
+        err.hidden = false;
+        err.textContent = "Could not start Checkout. No charge was made.";
+        go.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
