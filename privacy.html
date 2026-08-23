@@ -185,7 +185,7 @@
     
     <h2>How long data lives</h2>
     <p>The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record.</p>
-    <p>The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory for <strong>24 hours</strong>, then gone. After 24 hours the id no longer downloads.</p>
+    <p>The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are stored in private Blob storage for 24 hours, then gone. After 24 hours the id no longer downloads.</p>
     <p>sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
     
     <h2>Email</h2>
