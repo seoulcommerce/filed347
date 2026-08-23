@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { buildPdf } = require("../lib-pdf");
 const { parseForm } = require("../lib-form");
+const { hasUsedPreview, markPreviewUsed, resetForTesting } = require("../lib-preview-limit");
 
 // Simulate the API logic
 function testPdfEndpoint(live, sessionId) {
@@ -107,7 +108,45 @@ if (test5.status === 200 && isPdf) {
   process.exit(1);
 }
 
+console.log("Test 6: POST /api/preview when live=true, first request");
+resetForTesting();
+const clientIp1 = "192.168.1.1";
+const used1 = hasUsedPreview(clientIp1);
+console.log(`Has used preview: ${used1 ? "YES" : "NO"}`);
+if (!used1) {
+  markPreviewUsed(clientIp1);
+  console.log(`✅ PASS: First preview allowed\n`);
+} else {
+  console.log(`❌ FAIL: Should allow first preview\n`);
+  process.exit(1);
+}
+
+console.log("Test 7: POST /api/preview when live=true, second request (same client)");
+const used2 = hasUsedPreview(clientIp1);
+console.log(`Has used preview: ${used2 ? "YES" : "NO"}`);
+if (used2) {
+  console.log(`✅ PASS: Second preview blocked (returns 402)\n`);
+} else {
+  console.log(`❌ FAIL: Should block second preview\n`);
+  process.exit(1);
+}
+
+console.log("Test 8: POST /api/preview when live=true, different client");
+const clientIp2 = "192.168.1.2";
+const used3 = hasUsedPreview(clientIp2);
+console.log(`Has used preview: ${used3 ? "YES" : "NO"}`);
+if (!used3) {
+  console.log(`✅ PASS: Different client allowed their first preview\n`);
+} else {
+  console.log(`❌ FAIL: Should allow different client\n`);
+  process.exit(1);
+}
+
 console.log("=== ALL TESTS PASSED ===");
-console.log("When live=true, unpaid requests return 402 with no PDF.");
-console.log("When live=false, unpaid preview works.");
-console.log("When live=true + paid session, PDF is generated.");
+console.log("When live=true:");
+console.log("- First /api/preview → 200 PDF");
+console.log("- Second /api/preview (same client) → 402 no PDF");
+console.log("- /api/pdf no session → 402");
+console.log("- /api/generate no session → 402");
+console.log("When live=false: unlimited preview for QA");
+console.log("Sample PDF always free and unlimited");
