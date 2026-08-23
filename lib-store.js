@@ -136,14 +136,14 @@ async function get(id) {
   
   try {
     const metaResult = await blob.get(`filed347/meta/${key}.json`, { access: 'private' });
-    if (!metaResult || metaResult.statusCode !== 200) return null;
+    if (!metaResult) return null;
     
     const metaText = await metaResult.text();
     const j = JSON.parse(metaText);
     if (expired(j)) return null;
     
     const pdfResult = await blob.get(`filed347/pdf/${key}.pdf`, { access: 'private' });
-    if (!pdfResult || pdfResult.statusCode !== 200) return null;
+    if (!pdfResult) return null;
     
     const pdfBuffer = Buffer.from(await pdfResult.arrayBuffer());
     rec = Object.assign({}, j, { pdf: pdfBuffer });
@@ -168,7 +168,7 @@ async function checkPreviewLimit(identifier) {
   try {
     const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
     const limitResult = await blob.get(`filed347/preview-limit/${hash}.json`, { access: 'private' });
-    if (limitResult && limitResult.statusCode === 200) {
+    if (limitResult) {
       const limitText = await limitResult.text();
       const data = JSON.parse(limitText);
       if (data.used && (Date.now() - data.used) < TTL_MS) {
