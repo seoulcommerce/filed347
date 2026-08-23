@@ -3,28 +3,20 @@ const path = require("path");
 const crypto = require("crypto");
 
 const TTL_MS = 24 * 60 * 60 * 1000;
-const TTL_SEC = 86400;
 const DIR = "/tmp/filed347";
 const mem = new Map();
 
-let vercelCache = null;
+let blobClient = null;
 
-async function getVercelCache() {
-  if (vercelCache) return vercelCache;
-  try {
-    const { getCache } = require("@vercel/functions");
-    vercelCache = getCache({ namespace: "filed347" });
-    return vercelCache;
-  } catch (_) {
+async function getBlobClient() {
+  if (blobClient) return blobClient;
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return null;
   }
-}
-
-async function getBlobStore() {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
   try {
-    const { put, get } = require("@vercel/blob");
-    return { put, get };
+    const { put, get, del, list } = require("@vercel/blob");
+    blobClient = { put, get, del, list };
+    return blobClient;
   } catch (_) {
     return null;
   }
@@ -83,7 +75,6 @@ async function put(a, b, c) {
   const id = newId();
   const createdAt = Date.now();
   const safe = Object.assign({}, form || {}, { csv: "" });
-  // Never the CSV
   const rec = { id, createdAt, form: safe, name: name || "filed347-wh347.pdf" };
   
   mem.set(id, Object.assign({}, rec, { pdf }));
@@ -94,23 +85,26 @@ async function put(a, b, c) {
     fs.writeFileSync(path.join(DIR, id + ".pdf"), pdf);
   } catch (_) {}
   
-  try {
-    const cache = await getVercelCache();
-    if (cache) {
-      await cache.set(id + ".json", JSON.stringify(rec), { ttl: TTL_SEC });
-      await cache.set(id + ".pdf", pdf.toString("base64"), { ttl: TTL_SEC });
-    }
-  } catch (_) {}
+  const blob = await getBlobClient();
+  if (!blob) {
+    throw new Error("BLOB_READ_WRITE_TOKEN not configured. PDF cannot be stored for cross-lambda retrieval.");
+  }
   
   try {
-    const blob = await getBlobStore();
-    if (blob) {
-      await blob.put(`filed347/${id}.pdf`, pdf, {
-        access: "public",
-        addRandomSuffix: false
-      });
-    }
-  } catch (_) {}
+    await blob.put(`filed347/pdf/${id}.pdf`, pdf, {
+      access: "private",
+      addRandomSuffix: false,
+      cacheControlMaxAge: TTL_MS / 1000
+    });
+    
+    await blob.put(`filed347/meta/${id}.json`, JSON.stringify(rec), {
+      access: "private",
+      addRandomSuffix: false,
+      cacheControlMaxAge: TTL_MS / 1000
+    });
+  } catch (err) {
+    throw new Error(`Failed to store PDF in blob: ${err.message}`);
+  }
   
   sweep();
   return id;
@@ -139,23 +133,26 @@ async function get(id) {
     return rec;
   } catch (_) {}
   
-  try {
-    const cache = await getVercelCache();
-    if (cache) {
-      const jsonStr = await cache.get(key + ".json");
-      const pdfB64 = await cache.get(key + ".pdf");
-      if (jsonStr && pdfB64) {
-        const j = JSON.parse(jsonStr);
-        if (expired(j)) return null;
-        const pdf = Buffer.from(pdfB64, "base64");
-        rec = Object.assign({}, j, { pdf });
-        mem.set(key, rec);
-        return rec;
-      }
-    }
-  } catch (_) {}
+  const blob = await getBlobClient();
+  if (!blob) return null;
   
-  return null;
+  try {
+    const metaResp = await fetch(`https://blob.vercel-storage.com/filed347/meta/${key}.json`);
+    if (!metaResp.ok) return null;
+    
+    const j = await metaResp.json();
+    if (expired(j)) return null;
+    
+    const pdfResp = await fetch(`https://blob.vercel-storage.com/filed347/pdf/${key}.pdf`);
+    if (!pdfResp.ok) return null;
+    
+    const pdfBuffer = Buffer.from(await pdfResp.arrayBuffer());
+    rec = Object.assign({}, j, { pdf: pdfBuffer });
+    mem.set(key, rec);
+    return rec;
+  } catch (_) {
+    return null;
+  }
 }
 
 async function checkPreviewLimit(identifier) {
@@ -166,18 +163,20 @@ async function checkPreviewLimit(identifier) {
     return true;
   }
   
-  try {
-    const cache = await getVercelCache();
-    if (cache) {
-      const val = await cache.get(key);
-      if (val) {
-        mem.set(key, Date.now());
-        return true;
-      }
-    }
-  } catch (_) {}
+  const blob = await getBlobClient();
+  if (!blob) return false;
   
-  return false;
+  try {
+    const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
+    const resp = await fetch(`https://blob.vercel-storage.com/filed347/preview-limit/${hash}.json`);
+    if (resp.ok) {
+      mem.set(key, Date.now());
+      return true;
+    }
+    return false;
+  } catch (_) {
+    return false;
+  }
 }
 
 async function recordPreview(identifier) {
@@ -185,11 +184,16 @@ async function recordPreview(identifier) {
   const now = Date.now();
   mem.set(key, now);
   
+  const blob = await getBlobClient();
+  if (!blob) return;
+  
   try {
-    const cache = await getVercelCache();
-    if (cache) {
-      await cache.set(key, "1", { ttl: TTL_SEC });
-    }
+    const hash = crypto.createHash("sha256").update(identifier).digest("hex").slice(0, 16);
+    await blob.put(`filed347/preview-limit/${hash}.json`, JSON.stringify({ used: now }), {
+      access: "private",
+      addRandomSuffix: false,
+      cacheControlMaxAge: TTL_MS / 1000
+    });
   } catch (_) {}
 }
 

@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
     await store.recordPreview(identifier);
   }
 
-  const pdf = buildPdf(form, { watermark: live });
+  const pdf = buildPdf(form, { watermark: true });
   const name = filenameFor(form);
   const id = await store.put(form, pdf, name);
   
