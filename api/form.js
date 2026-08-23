@@ -16,6 +16,6 @@ module.exports = async function handler(req, res) {
   }
   const pdf = buildPdf(form);
   const name = filenameFor(form);
-  const id = store.put(pdf, name);
-  json(res, 200, { id, name, workers: form.workers.length });
+  const id = store.put(form, pdf, name);
+  json(res, 200, { id, name, workers: form.workers.length, ttlHours: 24 });
 };
