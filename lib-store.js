@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const TTL_MS = 60 * 60 * 1000;
-const DIR = "/tmp/filed347-pdf";
+const TTL_MS = 24 * 60 * 60 * 1000;
+const DIR = "/tmp/filed347";
 const mem = new Map();
 
 function newId() {
@@ -20,40 +20,51 @@ function expired(rec) {
 
 function del(id) {
   mem.delete(id);
+  try { fs.unlinkSync(path.join(DIR, id + ".json")); } catch (_) {}
   try { fs.unlinkSync(path.join(DIR, id + ".pdf")); } catch (_) {}
-  try { fs.unlinkSync(path.join(DIR, id + ".name")); } catch (_) {}
 }
 
 function sweep() {
   for (const [k, v] of mem) {
     if (expired(v)) del(k);
   }
+  try {
+    for (const f of fs.readdirSync(DIR)) {
+      if (!f.endsWith(".json")) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"));
+        if (expired(j)) del(j.id || f.replace(/\.json$/, ""));
+      } catch (_) {}
+    }
+  } catch (_) {}
 }
 
 function asPdf(x) {
   if (Buffer.isBuffer(x)) return x;
   if (x && typeof x === "object" && x.type === "Buffer" && Array.isArray(x.data)) return Buffer.from(x.data);
-  if (typeof x === "string") return Buffer.from(x, "latin1");
+  if (typeof x === "string" && x.slice(0, 4) === "%PDF") return Buffer.from(x, "latin1");
   return null;
 }
 
-// Persist PDF bytes + filename only. Never the CSV. Never the form.
-// Accept put(pdf, name) or put(ignoredForm, pdf, name).
 function put(a, b, c) {
+  let form = {};
   let pdf = asPdf(a);
   let name = typeof b === "string" ? b : "";
   if (!pdf) {
+    if (a && typeof a === "object") form = a;
     pdf = asPdf(b);
     name = typeof c === "string" ? c : name;
   }
   if (!pdf) pdf = Buffer.from("%PDF-1.4\n%%EOF\n");
   const id = newId();
-  const rec = { id, createdAt: Date.now(), name: name || "filed347-wh347.pdf", pdf };
-  mem.set(id, rec);
+  const createdAt = Date.now();
+  const safe = Object.assign({}, form || {}, { csv: "" });
+  const rec = { id, createdAt, form: safe, name: name || "filed347-wh347.pdf" };
+  mem.set(id, Object.assign({}, rec, { pdf }));
   ensureDir();
   try {
+    fs.writeFileSync(path.join(DIR, id + ".json"), JSON.stringify(rec));
     fs.writeFileSync(path.join(DIR, id + ".pdf"), pdf);
-    fs.writeFileSync(path.join(DIR, id + ".name"), rec.name);
   } catch (_) {}
   sweep();
   return id;
@@ -69,10 +80,13 @@ function get(id) {
   }
   if (rec && rec.pdf) return rec;
   try {
+    const j = JSON.parse(fs.readFileSync(path.join(DIR, key + ".json"), "utf8"));
+    if (expired(j)) {
+      del(key);
+      return null;
+    }
     const pdf = fs.readFileSync(path.join(DIR, key + ".pdf"));
-    let name = "filed347-wh347.pdf";
-    try { name = fs.readFileSync(path.join(DIR, key + ".name"), "utf8"); } catch (_) {}
-    rec = { id: key, name, pdf, createdAt: Date.now() };
+    rec = Object.assign({}, j, { pdf });
     mem.set(key, rec);
     return rec;
   } catch (_) {

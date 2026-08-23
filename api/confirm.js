@@ -21,6 +21,7 @@ module.exports = async function handler(req, res) {
   json(res, 200, {
     paid,
     email: (data.customer_details && data.customer_details.email) || data.customer_email || (data.metadata && data.metadata.email) || "",
-    product: "filed347"
+    product: "filed347",
+    formId: (data.metadata && data.metadata.formId) || ""
   });
 };
