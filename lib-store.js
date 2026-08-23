@@ -15,7 +15,8 @@ function ensureDir() {
 }
 
 function expired(rec) {
-  return !rec || !rec.createdAt || (Date.now() - rec.createdAt) > TTL_MS;
+  const ttl = rec && rec.ttl ? rec.ttl : TTL_MS;
+  return !rec || !rec.createdAt || (Date.now() - rec.createdAt) > ttl;
 }
 
 function del(id) {
@@ -46,7 +47,7 @@ function asPdf(x) {
   return null;
 }
 
-function put(a, b, c) {
+function put(a, b, c, customTtl) {
   let form = {};
   let pdf = asPdf(a);
   let name = typeof b === "string" ? b : "";
@@ -58,8 +59,9 @@ function put(a, b, c) {
   if (!pdf) pdf = Buffer.from("%PDF-1.4\n%%EOF\n");
   const id = newId();
   const createdAt = Date.now();
+  const ttl = typeof customTtl === "number" ? customTtl : TTL_MS;
   const safe = Object.assign({}, form || {}, { csv: "" });
-  const rec = { id, createdAt, form: safe, name: name || "filed347-wh347.pdf" };
+  const rec = { id, createdAt, ttl, form: safe, name: name || "filed347-wh347.pdf" };
   mem.set(id, Object.assign({}, rec, { pdf }));
   ensureDir();
   try {

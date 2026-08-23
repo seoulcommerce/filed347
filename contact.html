@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Filed347</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
+    .top { border-bottom:1px solid var(--line); background:#fff; }
+    .top .wrap, .wrap { max-width:900px; margin:0 auto; padding:0 1.25rem; }
+    .top .wrap { display:flex; align-items:center; gap:.6rem; height:56px; }
+    .mark { width:28px; height:28px; }
+    .content { padding:2rem 0; }
+    h1 { font-size:2rem; letter-spacing:-.03em; line-height:1.15; margin:0 0 .8rem; font-weight:700; }
+    p { margin:.8rem 0; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.8rem; margin:1.8rem 0; }
+    label { display:block; font-weight:650; margin:.85rem 0 .35rem; font-size:.95rem; }
+    input, textarea { width:100%; box-sizing:border-box; font:inherit; padding:.75rem .85rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; font-size:.95rem; }
+    textarea { min-height:10rem; resize:vertical; }
+    .btn { display:block; width:100%; margin-top:1.2rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:1rem; border-radius:10px; cursor:pointer; font-size:1rem; transition:opacity .2s; }
+    .btn:hover:not(:disabled) { opacity:.9; }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .ok { color:#166534; font-weight:600; margin-top:1rem; }
+    .err { color:#b91c1c; font-weight:600; margin-top:1rem; }
+    .not { color:var(--muted); font-size:.92rem; margin-top:1rem; }
+    footer { color:#78716c; font-size:.88rem; padding:2rem 0 4rem; border-top:1px solid var(--line); margin-top:3rem; }
+    footer a { color:inherit; text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="top"><div class="wrap">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1d4ed8"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text></svg>
+    <strong>Filed347</strong>
+  </div></div>
+  
+  <div class="wrap">
+    <div class="content">
+      <h1>Contact</h1>
+      <p>Questions about Filed347? Use this form. We do not accept payroll CSVs by email. Do not send payroll files, employee names, or SSNs.</p>
+      
+      <form class="card" id="contact-form">
+        <label for="name">Your name</label>
+        <input id="name" required maxlength="100">
+        
+        <label for="reply-email">Reply email</label>
+        <input id="reply-email" type="email" required maxlength="200">
+        
+        <label for="message">Message</label>
+        <textarea id="message" required maxlength="2000"></textarea>
+        
+        <button class="btn" type="submit" id="submit-btn">Send message</button>
+        <p class="not" id="note">We review messages but there is no product inbox yet.</p>
+        <p class="ok" id="success" hidden></p>
+        <p class="err" id="error" hidden></p>
+      </form>
+    </div>
+
+    <footer>
+      <p>Filed347. Software. Not a legal opinion. You review, mark boxes, sign, and file.</p>
+      <p><a href="/">Home</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+    </footer>
+  </div>
+  
+  <script>
+    const form = document.getElementById("contact-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const success = document.getElementById("success");
+    const error = document.getElementById("error");
+    
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      success.hidden = true;
+      error.hidden = true;
+      submitBtn.disabled = true;
+      
+      try {
+        const r = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            name: document.getElementById("name").value,
+            replyEmail: document.getElementById("reply-email").value,
+            message: document.getElementById("message").value
+          })
+        });
+        
+        const data = await r.json();
+        
+        if (!r.ok) {
+          error.hidden = false;
+          error.textContent = data.error || "Could not send message. Try again.";
+          submitBtn.disabled = false;
+          return;
+        }
+        
+        success.hidden = false;
+        success.textContent = "Message received. Thank you.";
+        form.reset();
+        submitBtn.disabled = false;
+      } catch (err) {
+        error.hidden = false;
+        error.textContent = "Could not send message. Check your connection.";
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

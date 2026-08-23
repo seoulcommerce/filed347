@@ -29,7 +29,7 @@
     <p>Last 4 only. We drop anything that looks like a 9-digit SSN. Do not upload a full Social Security number. Identifying numbers on the PDF are last four characters only.</p>
     <h2>How long data lives</h2>
     <p>The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record.</p>
-    <p>The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory and under <code>/tmp/filed347/{id}.json</code> and <code>{id}.pdf</code> for <strong>24 hours</strong>, then gone. After 24 hours the id no longer downloads.</p>
+    <p>The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory for <strong>24 hours</strong>, then gone. After 24 hours the id no longer downloads.</p>
     <p>sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
     <h2>Email</h2>
     <p>Contact: Filed347. We do not accept payroll CSVs by email. Do not send payroll files, employee names, or last-4s by email. There is no payroll inbox.</p>
