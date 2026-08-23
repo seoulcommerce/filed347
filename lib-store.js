@@ -11,10 +11,8 @@ let blobClient = null;
 async function getBlobClient() {
   if (blobClient) return blobClient;
   
-  const hasOidc = process.env.BLOB_STORE_ID && process.env.VERCEL_OIDC_TOKEN;
-  const hasToken = process.env.BLOB_READ_WRITE_TOKEN;
-  
-  if (!hasOidc && !hasToken) {
+  const hasBlob = process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN;
+  if (!hasBlob) {
     return null;
   }
   

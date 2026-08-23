@@ -3,6 +3,6 @@
   "private": true,
   "description": "Weekly certified payroll. CSV in, WH-347 PDF out. $69/mo.",
   "dependencies": {
-    "@vercel/blob": "^0.28.0"
+    "@vercel/blob": "^2.8.0"
   }
 }
