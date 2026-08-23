@@ -3,86 +3,519 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Filed347 — Weekly certified payroll. From a CSV.</title>
-  <meta name="description" content="Software generates a WH-347. You review it, mark the boxes, sign it, and file it.">
+  <title>Filed347 — The weekly WH-347, built from the payroll file you already have</title>
+  <meta name="description" content="One CSV in. A completed form out. You still review it, sign it, and send it.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
-    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; }
-    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
-    .top { border-bottom:1px solid var(--line); background:#fff; }
-    .top .wrap, .wrap { max-width:900px; margin:0 auto; padding:0 1.25rem; }
-    .top .wrap { display:flex; align-items:center; gap:.6rem; height:56px; }
-    .mark { width:28px; height:28px; }
-    h1 { font-size:2.5rem; letter-spacing:-.03em; line-height:1.15; margin:2.5rem 0 .8rem; font-weight:800; }
-    .sub { color:var(--muted); font-size:1.2rem; margin:0 0 2.5rem; max-width:700px; }
-    ul, ol { padding-left:1.2rem; }
-    li { margin:.4rem 0; }
-    h2 { font-size:1.35rem; margin:2.5rem 0 .8rem; font-weight:700; }
-    .hero { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.8rem; margin:2.5rem 0; }
-    .sample-preview { text-align:center; }
-    .sample-frame { background:#fff; border:2px solid var(--line); border-radius:12px; padding:1.5rem; margin:1rem 0; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
-    .sample-placeholder { background:#fafafa; border:2px dashed var(--line); border-radius:8px; padding:3rem 2rem; text-align:center; color:var(--muted); font-size:.95rem; }
-    .sample-links { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin:1.5rem 0; }
-    .sample-links a { display:inline-block; font-weight:650; color:#fff; background:var(--acc); padding:.8rem 1.5rem; border-radius:10px; text-decoration:none; transition:opacity .2s; }
-    .sample-links a:hover { opacity:.9; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.5rem; margin:1.8rem 0; }
-    label { display:block; font-weight:650; margin:.85rem 0 .35rem; font-size:.95rem; }
-    input, textarea, select { width:100%; box-sizing:border-box; font:inherit; padding:.75rem .85rem; border:1px solid #c4c0ba; border-radius:8px; background:#fff; font-size:.95rem; }
-    textarea { min-height:8rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; resize:vertical; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; }
-    fieldset { border:1px solid var(--line); border-radius:10px; margin:.9rem 0; padding:.7rem .9rem .95rem; }
-    legend { font-weight:650; padding:0 .4rem; }
-    .opt { display:flex; align-items:center; gap:.5rem; font-weight:550; margin:.4rem 0; }
-    .opt input { width:auto; margin:0; }
-    .btn { display:block; width:100%; margin-top:1.2rem; border:0; background:var(--acc); color:#fff; font:inherit; font-weight:750; padding:1rem; border-radius:10px; cursor:pointer; font-size:1rem; transition:opacity .2s; }
-    .btn:hover:not(:disabled) { opacity:.9; }
-    .btn:disabled { opacity:.5; cursor:not-allowed; }
-    .btn-secondary { background:#57534e; margin-top:.8rem; }
-    .not { color:var(--muted); font-size:.92rem; margin-top:.8rem; }
-    .err { color:#b91c1c; margin-top:.8rem; }
-    footer { color:#78716c; font-size:.88rem; padding:2rem 0 4rem; border-top:1px solid var(--line); margin-top:3rem; }
-    footer a { color:inherit; text-decoration:underline; }
+    :root { 
+      --ink: #1c1917; 
+      --muted: #57534e; 
+      --line: #d6d3d1; 
+      --paper: #f9f7f4;
+      --card: #fff; 
+      --accent: #0f172a;
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body { 
+      margin: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink); 
+      background: var(--paper); 
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .top { 
+      border-bottom: 1px solid var(--line); 
+      background: var(--card); 
+    }
+    
+    .top-inner { 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding: 0 2rem; 
+      display: flex; 
+      align-items: center; 
+      gap: 0.75rem; 
+      height: 64px; 
+    }
+    
+    .mark { 
+      width: 32px; 
+      height: 32px; 
+    }
+    
+    .wordmark {
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+    
+    .container { 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding: 0 2rem; 
+    }
+    
+    .hero { 
+      padding: 5rem 0 4rem; 
+      max-width: 820px; 
+    }
+    
+    h1 { 
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 3.5rem; 
+      letter-spacing: -0.03em; 
+      line-height: 1.1; 
+      margin: 0 0 1.5rem; 
+      font-weight: 400;
+    }
+    
+    .subhead { 
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-style: italic;
+      color: var(--muted); 
+      font-size: 1.5rem; 
+      margin: 0 0 2rem; 
+      font-weight: 400;
+      line-height: 1.45;
+    }
+    
+    .sample-links { 
+      display: flex; 
+      gap: 1.5rem; 
+      flex-wrap: wrap; 
+      margin: 2rem 0 4rem;
+    }
+    
+    .sample-links a { 
+      color: var(--muted); 
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-size: 1.05rem;
+    }
+    
+    .sample-links a:hover { 
+      color: var(--ink); 
+    }
+    
+    .product-frame {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin: 0 0 5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    
+    .sample-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    
+    .section { 
+      margin: 5rem 0; 
+      max-width: 820px; 
+    }
+    
+    h2 { 
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 1.75rem; 
+      margin: 0 0 2rem; 
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    
+    .steps { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0;
+      counter-reset: step;
+    }
+    
+    .steps li { 
+      counter-increment: step;
+      position: relative;
+      padding-left: 4rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: -0.25rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border: 1.5px solid var(--ink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    
+    .steps li p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    
+    .cta-section {
+      margin: 4rem 0 5rem;
+    }
+    
+    .btn-primary { 
+      display: inline-block;
+      border: 0; 
+      background: var(--accent); 
+      color: #fff; 
+      font: inherit; 
+      font-weight: 600; 
+      padding: 1rem 2.5rem; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-size: 1.05rem; 
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    
+    .btn-primary:hover:not(:disabled) { 
+      opacity: 0.9; 
+    }
+    
+    .btn-primary:disabled { 
+      opacity: 0.5; 
+      cursor: not-allowed; 
+    }
+    
+    .offer-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      margin: 3rem 0;
+      max-width: 500px;
+    }
+    
+    .price {
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+    
+    .offer-card p {
+      margin: 0.5rem 0;
+      color: var(--muted);
+    }
+    
+    .notice {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+    
+    .dol-section {
+      background: #fafaf9;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      margin: 3rem 0;
+      max-width: 820px;
+    }
+    
+    .dol-section h3 {
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 1.35rem;
+      margin: 0 0 1rem;
+      font-weight: 400;
+    }
+    
+    .dol-section p {
+      margin: 0.75rem 0;
+      line-height: 1.6;
+    }
+    
+    .dol-section a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    
+    .form-section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin: 4rem 0;
+      max-width: 820px;
+    }
+    
+    .form-section h2 {
+      font-size: 1.5rem;
+      margin: 0 0 2rem;
+    }
+    
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin: 1.25rem 0 0.5rem; 
+      font-size: 0.95rem; 
+    }
+    
+    input, textarea, select { 
+      width: 100%; 
+      font: inherit; 
+      padding: 0.75rem 1rem; 
+      border: 1px solid #c4c0ba; 
+      border-radius: 6px; 
+      background: #fff; 
+      font-size: 1rem; 
+    }
+    
+    textarea { 
+      min-height: 7rem; 
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; 
+      font-size: 0.9rem; 
+      resize: vertical; 
+    }
+    
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 1rem; 
+    }
+    
+    fieldset { 
+      border: 1px solid var(--line); 
+      border-radius: 8px; 
+      margin: 1.25rem 0; 
+      padding: 1rem 1.25rem; 
+    }
+    
+    legend { 
+      font-weight: 600; 
+      padding: 0 0.5rem; 
+      font-size: 0.95rem;
+    }
+    
+    .radio-option { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.5rem; 
+      font-weight: 500; 
+      margin: 0.5rem 0; 
+    }
+    
+    .radio-option input { 
+      width: auto; 
+      margin: 0; 
+    }
+    
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      margin: 1rem 0;
+    }
+    
+    .checkbox-option input {
+      width: auto;
+      margin: 0;
+    }
+    
+    .form-button {
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+    
+    .error-message { 
+      color: #b91c1c; 
+      margin-top: 1rem; 
+      font-size: 0.95rem;
+    }
+    
+    .legal-section {
+      margin: 5rem 0 3rem;
+      max-width: 820px;
+    }
+    
+    .legal-section h3 {
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 1.35rem;
+      margin: 2.5rem 0 1rem;
+      font-weight: 400;
+    }
+    
+    .legal-section p {
+      margin: 0.75rem 0;
+      line-height: 1.6;
+    }
+    
+    .legal-section strong {
+      font-weight: 600;
+    }
+    
+    .legal-section ol {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
+    }
+    
+    .legal-section li {
+      margin: 0.75rem 0;
+      line-height: 1.6;
+    }
+    
+    footer { 
+      color: #78716c; 
+      font-size: 0.95rem; 
+      padding: 3rem 0 4rem; 
+      border-top: 1px solid var(--line); 
+      margin-top: 5rem; 
+    }
+    
+    footer p {
+      margin: 0.5rem 0;
+    }
+    
+    footer a { 
+      color: inherit; 
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    
     @media (max-width: 768px) { 
-      .grid { grid-template-columns:1fr; } 
-      h1 { font-size:1.9rem; margin:1.8rem 0 .6rem; } 
-      .sub { font-size:1.05rem; }
-      .wrap { padding:0 1rem; }
-      .sample-frame { padding:1rem; }
+      .top-inner {
+        padding: 0 1.25rem;
+        height: 56px;
+      }
+      
+      .container {
+        padding: 0 1.25rem;
+      }
+      
+      .hero {
+        padding: 3rem 0 2.5rem;
+      }
+      
+      h1 { 
+        font-size: 2.25rem; 
+        margin-bottom: 1.25rem;
+      } 
+      
+      .subhead { 
+        font-size: 1.25rem; 
+      }
+      
+      .product-frame {
+        padding: 1.5rem;
+      }
+      
+      .section {
+        margin: 3rem 0;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .steps li {
+        padding-left: 3rem;
+        margin-bottom: 2rem;
+      }
+      
+      .steps li::before {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.95rem;
+      }
+      
+      .steps li p {
+        font-size: 1rem;
+      }
+      
+      .grid { 
+        grid-template-columns: 1fr; 
+      }
+      
+      .offer-card,
+      .dol-section,
+      .form-section {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="top"><div class="wrap">
-    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1d4ed8"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text></svg>
-    <strong>Filed347</strong>
-  </div></div>
+  <div class="top">
+    <div class="top-inner">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="6" fill="#0f172a"/>
+        <text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text>
+      </svg>
+      <span class="wordmark">Filed347</span>
+    </div>
+  </div>
   
-  <div class="wrap">
-    <h1>Weekly certified payroll. From a CSV.</h1>
-    <p class="sub">Software generates a WH-347. You review it, mark the boxes, sign it, and file it.</p>
-
+  <div class="container">
     <div class="hero">
-      <div class="sample-preview">
-        <a href="/sample-wh347.pdf" style="display:block; margin:1rem 0;">
-          <img src="/sample-wh347-page1.png" alt="Sample WH-347 Form - Page 1" style="max-width:100%; height:auto; border:2px solid var(--line); border-radius:8px; display:block; margin:0 auto;">
-        </a>
-        <div class="sample-links">
-          <a href="/sample-wh347.pdf" download>Download Sample WH-347 (PDF)</a>
-          <a href="/sample.csv" download>Download Sample CSV</a>
-          <a href="/COLUMN-MAPPING.md">CSV Column Guide</a>
-        </div>
-        <p class="not">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
+      <h1>The weekly WH-347, built from the payroll file you already have.</h1>
+      <p class="subhead">One CSV in. A completed form out. You still review it, sign it, and send it.</p>
+      
+      <div class="sample-links">
+        <a href="/sample-wh347.pdf">Open a sample WH-347</a>
+        <a href="/sample.csv" download>Download a sample CSV</a>
       </div>
     </div>
 
-    <h2>What you still do</h2>
-    <p>Review the PDF. Mark the boxes that apply (prime / sub / final payroll if they are on the form). Sign it. File it with the GC. We do not file it. We do not say you are compliant.</p>
+    <div class="product-frame">
+      <a href="/sample-wh347.pdf">
+        <img src="/sample-wh347-page1.png" alt="Sample WH-347 Form" class="sample-image">
+      </a>
+    </div>
 
-    <h2>CSV format</h2>
-    <p>Gusto and QBO weekly exports work. If your payroll system does not export Mon–Sun day columns, those cells stay blank on the WH-347. See the <a href="/COLUMN-MAPPING.md">column mapping guide</a> for header names we recognize.</p>
+    <div class="section">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li><p>Export one week of payroll. Last-4 only. Paste the project fields and the WD from the contract.</p></li>
+        <li><p>Generate the WH-347. The payroll table and the Statement of Compliance wording are printed for you.</p></li>
+        <li><p>You review the PDF, mark the boxes that apply, sign it, and file it with the GC.</p></li>
+      </ol>
+    </div>
 
-    <form class="card" id="f">
-      <h2 style="margin-top:0">Generate your WH-347</h2>
+    <div class="cta-section">
+      <a href="#generate" class="btn-primary">Generate the WH-347</a>
+    </div>
+
+    <div class="offer-card">
+      <div class="price">$69/mo</div>
+      <p>Weekly WH-347 generation from a payroll CSV.</p>
+      <p class="notice">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
+    </div>
+
+    <div class="dol-section">
+      <h3>Official form</h3>
+      <p>WH-347 is the Department of Labor's optional weekly certified payroll form for Davis-Bacon and Related Acts work. Instructions and the blank form live on dol.gov, not here:</p>
+      <p><a href="https://www.dol.gov/agencies/whd/forms/wh347" target="_blank" rel="noopener">https://www.dol.gov/agencies/whd/forms/wh347</a></p>
+      <p>Use of that specific form is optional. Submitting weekly certified payroll is not. We generate a WH-347-style PDF from your file. We are not DOL.</p>
+    </div>
+
+    <div class="legal-section">
+      <h3>What you still do</h3>
+      <p>Review the PDF. Mark the boxes that apply (prime / sub / final payroll if they are on the form). Sign it. File it with the GC. We do not file it. We do not say you are compliant.</p>
+    </div>
+
+    <form class="form-section" id="f">
+      <h2 id="generate">Generate your WH-347</h2>
       
       <label for="contractor">Contractor / sub name</label>
       <input id="contractor" required maxlength="120" autocomplete="organization">
@@ -117,11 +550,11 @@
 
       <fieldset>
         <legend>Prime contractor / Subcontractor</legend>
-        <label class="opt"><input type="radio" name="role" value="prime" required> Prime contractor</label>
-        <label class="opt"><input type="radio" name="role" value="subcontractor" required> Subcontractor</label>
+        <label class="radio-option"><input type="radio" name="role" value="prime" required> Prime contractor</label>
+        <label class="radio-option"><input type="radio" name="role" value="subcontractor" required> Subcontractor</label>
       </fieldset>
 
-      <label class="opt"><input type="checkbox" id="finalPayroll"> Final payroll this project?</label>
+      <label class="checkbox-option"><input type="checkbox" id="finalPayroll"> Final payroll this project?</label>
 
       <label for="wageDetermination">Paste the WD number(s) from the contract. Do not invent one.</label>
       <textarea id="wageDetermination" maxlength="500"></textarea>
@@ -157,32 +590,33 @@
       <label for="csv">Last 4 of SSN only. Never a full SSN.</label>
       <textarea id="csv"></textarea>
 
-      <button class="btn" type="submit" id="go">Generate the WH-347</button>
-      <button class="btn btn-secondary" type="button" id="subscribe" disabled>Subscribe ($69/mo) — Not available</button>
-      <p class="not" id="paynote">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
-      <p class="err" id="err" hidden></p>
+      <button class="btn-primary form-button" type="submit" id="go">Generate the WH-347</button>
+      <p class="notice" id="paynote">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
+      <p class="error-message" id="err" hidden></p>
     </form>
 
-    <h2>Privacy</h2>
-    <p><strong>Who this is for.</strong> Public-works subcontractors generating a WH-347. Not the public. Not employees.</p>
-    <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, and email. Prime or subcontractor, and whether this is the final payroll.</p>
-    <p><strong>No full SSN.</strong> Last 4 only. We drop anything that looks like a 9-digit SSN. Do not upload a full Social Security number. Identifying numbers on the PDF are last four characters only.</p>
-    <p><strong>How long data lives.</strong> The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record. The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory for 24 hours, then gone. After 24 hours the id no longer downloads. sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
-    <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s by email. There is no payroll inbox.</p>
-    <p><strong>Not a law firm.</strong> This is software that fills a form from your file. Not a legal opinion. We do not file for you. We do not say you are compliant.</p>
+    <div class="legal-section">
+      <h3>Privacy</h3>
+      <p><strong>Who this is for.</strong> Public-works subcontractors generating a WH-347. Not the public. Not employees.</p>
+      <p><strong>What we ask for.</strong> Contractor and project fields you type. A payroll CSV. Optional certifying-official name, title, phone, and email. Prime or subcontractor, and whether this is the final payroll.</p>
+      <p><strong>No full SSN.</strong> Last 4 only. We drop anything that looks like a 9-digit SSN. Do not upload a full Social Security number. Identifying numbers on the PDF are last four characters only.</p>
+      <p><strong>How long data lives.</strong> The CSV is used to generate the PDF. It is not kept as a payroll archive. The raw CSV is stripped from the stored record. The preview payload (parsed fields and worker rows without the raw CSV) and the generated PDF are held in server memory for 24 hours, then gone. After 24 hours the id no longer downloads. sessionStorage in your browser is only a fallback if the server id is lost. Closing the tab clears that copy.</p>
+      <p><strong>Email.</strong> Do not send payroll files, employee names, or last-4s by email. There is no payroll inbox.</p>
+      <p><strong>Not a law firm.</strong> This is software that fills a form from your file. Not a legal opinion. We do not file for you. We do not say you are compliant.</p>
 
-    <h2>Short terms</h2>
-    <ol>
-      <li>Filed347 is software. It generates a WH-347-style PDF from the CSV and fields you provide.</li>
-      <li>You are responsible for reviewing the PDF, marking the boxes that apply, signing it, and filing it. We do not file it for you.</li>
-      <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC's process.</li>
-      <li>We do not invent wage determinations. You paste the WD from the contract. Sample files use SAMPLE workers and a SAMPLE job.</li>
-      <li>Do not upload a full SSN. Last-4 only.</li>
-      <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused.</li>
-      <li>$69/mo applies only when Stripe checkout is live. It is not live now. No charge can be made.</li>
-      <li>We can refuse a file that includes a full SSN or that we cannot parse.</li>
-      <li>These terms are the whole deal until a later dated rewrite.</li>
-    </ol>
+      <h3>Short terms</h3>
+      <ol>
+        <li>Filed347 is software. It generates a WH-347-style PDF from the CSV and fields you provide.</li>
+        <li>You are responsible for reviewing the PDF, marking the boxes that apply, signing it, and filing it. We do not file it for you.</li>
+        <li>We are not a law firm. Nothing here is a legal opinion. We do not say you are compliant with Davis-Bacon, a contract, or a GC's process.</li>
+        <li>We do not invent wage determinations. You paste the WD from the contract. Sample files use SAMPLE workers and a SAMPLE job.</li>
+        <li>Do not upload a full SSN. Last-4 only.</li>
+        <li>If a GC requires LCPtracker, eBacon, DIR, or another portal instead of a WH-347 PDF, this file may be unused.</li>
+        <li>No refund language until Stripe is live.</li>
+        <li>We can refuse a file that includes a full SSN or that we cannot parse.</li>
+        <li>These terms are the whole deal until a later dated rewrite.</li>
+      </ol>
+    </div>
 
     <footer>
       <p>Filed347. Software. Not a legal opinion. You review, mark boxes, sign, and file.</p>
@@ -193,7 +627,6 @@
   <script>
     const FIELDS = ["contractor","address","project","contractNo","location","weekEnding","payrollNo","wageDetermination","officialName","officialTitle","officialPhone","officialEmail","email","csv"];
     const go = document.getElementById("go");
-    const subscribe = document.getElementById("subscribe");
     const err = document.getElementById("err");
     const note = document.getElementById("paynote");
     const CAPTION_OFF = "Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.";
@@ -204,8 +637,6 @@
       stripeLive = !!(s && s.live);
       note.textContent = stripeLive ? CAPTION_ON : CAPTION_OFF;
       if (stripeLive) {
-        subscribe.disabled = false;
-        subscribe.textContent = "Subscribe ($69/mo)";
         document.getElementById("email-field").style.display = "block";
       }
     }).catch(() => { note.textContent = CAPTION_OFF; });

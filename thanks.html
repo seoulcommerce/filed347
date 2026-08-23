@@ -6,44 +6,158 @@
   <title>Thanks — Filed347</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
-    :root { --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --bg:#f5f4f1; --card:#fff; --acc:#1d4ed8; }
-    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
-    .top { border-bottom:1px solid var(--line); background:#fff; }
-    .top .wrap, .wrap { max-width:900px; margin:0 auto; padding:0 1.25rem; }
-    .top .wrap { display:flex; align-items:center; gap:.6rem; height:56px; }
-    .mark { width:28px; height:28px; }
-    .content { padding:2.5rem 0; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:2rem; margin:1.8rem 0; text-align:center; }
-    h1 { font-size:2rem; letter-spacing:-.03em; line-height:1.15; margin:0 0 1rem; font-weight:700; }
-    p { margin:.8rem 0; }
-    .ok { color:#166534; font-weight:600; }
-    .err { color:#b91c1c; font-weight:600; }
-    .not { color:var(--muted); font-size:.92rem; }
-    .btn { display:inline-block; margin:1.5rem .5rem .5rem; background:var(--acc); color:#fff; border:0; font:inherit; font-weight:650; padding:.9rem 1.5rem; border-radius:10px; cursor:pointer; text-decoration:none; transition:opacity .2s; }
-    .btn:hover:not(:disabled) { opacity:.9; }
-    .btn:disabled { opacity:.5; cursor:not-allowed; }
-    .btn-secondary { background:#57534e; }
+    :root { 
+      --ink: #1c1917; 
+      --muted: #57534e; 
+      --line: #d6d3d1; 
+      --paper: #f9f7f4;
+      --card: #fff; 
+      --accent: #0f172a;
+    }
+    
+    body { 
+      margin: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink); 
+      background: var(--paper); 
+      line-height: 1.65;
+    }
+    
+    .top { 
+      border-bottom: 1px solid var(--line); 
+      background: var(--card); 
+    }
+    
+    .top-inner { 
+      max-width: 860px; 
+      margin: 0 auto; 
+      padding: 0 2rem; 
+      display: flex; 
+      align-items: center; 
+      gap: 0.75rem; 
+      height: 64px; 
+    }
+    
+    .mark { 
+      width: 32px; 
+      height: 32px; 
+    }
+    
+    .wordmark {
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+    
+    .container { 
+      max-width: 860px; 
+      margin: 0 auto; 
+      padding: 3rem 2rem 4rem; 
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    
+    h1 { 
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 2.5rem; 
+      letter-spacing: -0.03em; 
+      margin: 0 0 1rem; 
+      font-weight: 400;
+    }
+    
+    p { 
+      margin: 1rem 0; 
+      line-height: 1.6;
+    }
+    
+    .success { 
+      color: #166534; 
+      font-weight: 600; 
+    }
+    
+    .error { 
+      color: #b91c1c; 
+      font-weight: 600; 
+    }
+    
+    .notice { 
+      color: var(--muted); 
+      font-size: 0.95rem; 
+      margin-top: 1.5rem;
+    }
+    
+    .btn { 
+      display: inline-block; 
+      margin: 1.5rem 0.5rem 0.5rem; 
+      background: var(--accent); 
+      color: #fff; 
+      border: 0; 
+      font: inherit; 
+      font-weight: 600; 
+      padding: 0.9rem 1.5rem; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      text-decoration: none; 
+      transition: opacity 0.15s;
+    }
+    
+    .btn:hover:not(:disabled) { 
+      opacity: 0.9; 
+    }
+    
+    .btn:disabled { 
+      opacity: 0.5; 
+      cursor: not-allowed; 
+    }
+    
+    .btn-secondary { 
+      background: #57534e; 
+    }
+    
     @media (max-width: 768px) { 
-      h1 { font-size:1.7rem; }
-      .wrap { padding:0 1rem; }
+      .top-inner,
+      .container {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+      
+      .card {
+        padding: 2rem 1.5rem;
+      }
+      
+      h1 { 
+        font-size: 2rem; 
+      }
     }
   </style>
 </head>
 <body>
-  <div class="top"><div class="wrap">
-    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1d4ed8"/><text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text></svg>
-    <strong>Filed347</strong>
-  </div></div>
+  <div class="top">
+    <div class="top-inner">
+      <a href="/" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit;">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="#0f172a"/>
+          <text x="16" y="21" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui" font-weight="700">347</text>
+        </svg>
+        <span class="wordmark">Filed347</span>
+      </a>
+    </div>
+  </div>
   
-  <div class="wrap">
-    <div class="content">
-      <div class="card">
-        <h1>Thanks.</h1>
-        <p id="msg">Looking up the WH-347…</p>
-        <div id="dl"></div>
-        <p class="not">Review the WH-347 and Statement of Compliance. Mark the boxes that apply. Sign it. We do not say you are compliant.</p>
-        <a href="/" class="btn btn-secondary">Back to home</a>
-      </div>
+  <div class="container">
+    <div class="card">
+      <h1>Thanks.</h1>
+      <p id="msg">Looking up the WH-347…</p>
+      <div id="dl"></div>
+      <p class="notice">Review the WH-347 and Statement of Compliance. Mark the boxes that apply. Sign it. We do not say you are compliant.</p>
+      <a href="/" class="btn btn-secondary">Back to home</a>
     </div>
   </div>
   
@@ -76,7 +190,7 @@
             body: JSON.stringify(body)
           });
           if (!pr.ok) {
-            msg.className = "err";
+            msg.className = "error";
             msg.textContent = "Could not build the PDF.";
             btn.disabled = false;
             return;
@@ -88,7 +202,7 @@
           a.click();
           btn.disabled = false;
         } catch (e) {
-          msg.className = "err";
+          msg.className = "error";
           msg.textContent = "Could not build the PDF.";
           btn.disabled = false;
         }
@@ -98,7 +212,7 @@
 
     (async () => {
       if (downloadId) {
-        msg.className = "ok";
+        msg.className = "success";
         msg.textContent = "Your WH-347 is ready. Review it, mark the boxes, sign it, and file it.";
         addDownload("/api/pdf?id=" + encodeURIComponent(downloadId));
         return;
@@ -115,29 +229,29 @@
           const r = await fetch("/api/confirm?session_id=" + encodeURIComponent(sessionId));
           const data = await r.json();
           if (data && data.paid) {
-            msg.className = "ok";
+            msg.className = "success";
             msg.textContent = "Subscription received. Download the WH-347 built from the CSV you uploaded.";
             if (saved) addBlobButton(Object.assign({}, saved, { session_id: sessionId }));
             else {
-              msg.className = "err";
+              msg.className = "error";
               msg.textContent = "Payment is confirmed, but this browser no longer has the CSV. Generate the WH-347 again from the form.";
             }
             return;
           }
         } catch (_) {}
-        msg.className = "err";
+        msg.className = "error";
         msg.textContent = "We could not confirm that payment.";
         return;
       }
       
       if (saved && saved.csv) {
-        msg.className = "ok";
+        msg.className = "success";
         msg.textContent = "Download the WH-347 built from the CSV in this browser session.";
         addBlobButton(saved);
         return;
       }
       
-      msg.className = "err";
+      msg.className = "error";
       msg.textContent = "No PDF to download. Generate a WH-347 from the form.";
     })();
   </script>
