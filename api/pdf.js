@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
     }
     const id = url.searchParams.get("id") || "";
     if (id) {
-      const rec = store.get(id);
+      const rec = await store.get(id);
       if (!rec || !rec.pdf) {
         json(res, 404, { error: "not_found" });
         return;
