@@ -92,6 +92,11 @@
       font-weight: 400;
     }
     
+    .hero-text h1 .line-one {
+      display: block;
+      white-space: nowrap;
+    }
+    
     .hero-text h1 .line-two {
       display: block;
       font-style: italic;
@@ -304,16 +309,6 @@
       padding: 0 3rem;
     }
     
-    .pricing-eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 2rem;
-      opacity: 0.8;
-    }
-    
     .pricing-card {
       background: var(--card);
       border-radius: 12px;
@@ -339,20 +334,14 @@
     .price-desc {
       font-size: 1.05rem;
       color: var(--ink);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       line-height: 1.6;
-    }
-    
-    .pricing-card .btn-primary {
-      width: 100%;
-      justify-content: center;
     }
     
     .price-note {
       color: var(--muted);
       font-size: 0.9rem;
-      margin-top: 1.5rem;
-      text-align: center;
+      margin-top: 0;
       line-height: 1.5;
     }
     
@@ -557,6 +546,10 @@
         font-size: 3.5rem;
       }
       
+      .hero-text h1 .line-one {
+        white-space: normal;
+      }
+      
       .hero-aside {
         padding-top: 0;
       }
@@ -603,6 +596,10 @@
       .hero-text h1 {
         font-size: 2.5rem;
         margin-bottom: 1.5rem;
+      }
+      
+      .hero-text h1 .line-one {
+        white-space: normal;
       }
       
       .subhead {
@@ -703,8 +700,8 @@
   <div class="hero-section">
     <div class="hero-text">
       <h1>
-        The weekly WH-347, built from the payroll file 
-        <span class="line-two">you already have.</span>
+        <span class="line-one">The weekly WH-347,</span>
+        <span class="line-two">built from the payroll file you already have.</span>
       </h1>
     </div>
     
@@ -763,12 +760,10 @@
   
   <div class="pricing-band">
     <div class="pricing-inner">
-      <div class="pricing-eyebrow">One price. No subscription.</div>
       <div class="pricing-card">
         <div class="price">$69</div>
         <div class="price-period">per month</div>
         <p class="price-desc">Weekly WH-347 generation from a payroll CSV.</p>
-        <a href="#generate" class="btn-primary">Generate the WH-347</a>
         <p class="price-note">Checkout is not live. No charge can be made. The sample PDF and sample CSV are free to open.</p>
       </div>
     </div>
